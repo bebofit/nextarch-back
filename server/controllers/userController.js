@@ -46,7 +46,7 @@ router.post('/signup',(req,res)=>{
 })
 
 
-router.post('/getuser',authenticate, (req,res)=>{
+router.get('/getuser',authenticate, (req,res)=>{
    res.send(req.user);
 })
 
