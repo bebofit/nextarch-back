@@ -1,4 +1,6 @@
 var {User} = require('../models/User')
+const _= require('lodash')
+
 var authenticate =(req,res,next)=>{
     let token = req.header('x-auth');
  
@@ -7,7 +9,9 @@ var authenticate =(req,res,next)=>{
         {
            return Promise.reject();
         }
-        req.user = user;
+        let result = _.pick(user, ['_id','email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+
+        req.user = result;
         req.token = token;
         next();
     }).catch((e)=>{

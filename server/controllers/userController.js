@@ -37,7 +37,7 @@ router.post('/signup',(req,res)=>{
       password: ciphertext,
       createdat
       });
-      let result = _.pick(user, ['email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+      let result = _.pick(user, ['_id','email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
     user.save().then(()=>{
       return  user.generateAuthToken();
     }).then((token)=>{
@@ -99,7 +99,7 @@ router.post('/changePassword',authenticate, async (req, res) => {
  
      user.password = ciphertext;
      const resu = await user.save();
-     let result = _.pick(resu, ['email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+     let result = _.pick(resu, ['_id','email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
      return res.status(200).send({ ...result._doc });
  })
 
