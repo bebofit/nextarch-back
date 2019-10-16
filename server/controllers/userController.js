@@ -20,18 +20,18 @@ router.post('/signup',(req,res)=>{
    let createdat = new Date();
    // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
     var user = new User({ 
-      email,
-      name,
-      dateofbirth,
-      gender,
-      city,
-      desc,
-      foi,
-      bio,
-      softwares,
-      company,
-      portfolio,
-      website,
+      email : body.email,
+      name: body.name,
+      dateofbirth: body.dateofbirth,
+      gender: body.gender,
+      city: body.city,
+      desc: body.desc,
+      foi: body.foi,
+      bio: body.bio,
+      softwares: body.softwares,
+      company: body.company,
+      portfolio: body.portfolio,
+      website: body.website,
       createdat
       });
 
