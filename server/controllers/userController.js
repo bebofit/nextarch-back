@@ -32,6 +32,7 @@ router.post('/signup',(req,res)=>{
       company: req.body.company,
       portfolio: req.body.portfolio,
       website: req.body.website,
+      password: user.password,
       createdat
       });
 
