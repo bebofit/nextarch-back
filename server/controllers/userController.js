@@ -1,6 +1,7 @@
 
 const {User} = require('../models/User');
 const {authenticate} = require('../middleware/authenticate')
+var CryptoJS = require("crypto-js");
 
 var express = require('express');
 var bodyParser = require('body-parser');
