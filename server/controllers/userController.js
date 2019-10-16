@@ -19,7 +19,21 @@ router.post('/signup',(req,res)=>{
    var body = _.pick(req.body);
    let createdat = new Date();
    // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
-    var user = new User({ body, createdat});
+    var user = new User({ 
+      email,
+      name,
+      dateofbirth,
+      gender,
+      city,
+      desc,
+      foi,
+      bio,
+      softwares,
+      company,
+      portfolio,
+      website,
+      createdat
+      });
 
     user.save().then(()=>{
       return  user.generateAuthToken();
