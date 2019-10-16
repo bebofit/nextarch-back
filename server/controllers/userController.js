@@ -18,8 +18,7 @@ router.post('/signup',(req,res)=>{
 
    // var body = _.pick(req.body);
    let createdat = new Date();
-   let password = user.password
-   console.log(password);
+   var ciphertext = CryptoJS.AES.encrypt(req.body.password, 'cabonourhanysisa1997');
    // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
     var user = new User({ 
       email : req.body.email,
@@ -34,7 +33,7 @@ router.post('/signup',(req,res)=>{
       company: req.body.company,
       portfolio: req.body.portfolio,
       website: req.body.website,
-      password,
+      password: ciphertext,
       createdat
       });
       let result = _.pick(user, ['email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);

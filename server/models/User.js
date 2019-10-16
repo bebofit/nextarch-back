@@ -143,25 +143,5 @@ UserSchema.methods.removeToken = function (token) {
     })
 }
 
-UserSchema.pre('save', function (next) {
-    var user = this;
-
-    if (user.isModified('password')) {
-        let password = user.password;
-        var ciphertext = CryptoJS.AES.encrypt(password, 'cabonourhanysisa1997');
-        user.password = ciphertext;
-        console.log(user.password);
-        next();
-        // bcrypt.genSalt(10, (err, salt) => {
-        //     bcrypt.hash(password, salt, (err, hash) => {
-        //         user.password = hash;
-        //         next();
-        //     })
-        // })
-
-
-    }
-    else { next() }
-})
 var User = mongoose.model('User', UserSchema)
 module.exports = { User }
