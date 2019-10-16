@@ -59,7 +59,9 @@ router.post('/login',async(req,res)=>{
    console.log(body);
    const user = await User.findByCred(body.email,body.password)
    const token = await user.generateAuthToken()
-   res.send({user:user, token: token})
+   let result = _.pick(user, ['_id','email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+
+   res.send({user:result, token: token})
 //   } catch (error) {
 //    res.status(400).send(error);
 //   }

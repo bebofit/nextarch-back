@@ -111,8 +111,7 @@ UserSchema.statics.findByCred = function (email, password) {
                     return Promise.reject()
                 }
                 else {
-                    let result = _.pick(user, ['_id','email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
-                    resolve(result)
+                    resolve(user)
                 }
         })
     })
