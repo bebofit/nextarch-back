@@ -35,11 +35,11 @@ router.post('/signup',(req,res)=>{
       password: user.password,
       createdat
       });
-
+      let result = _.pick(user, ['email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
     user.save().then(()=>{
       return  user.generateAuthToken();
     }).then((token)=>{
-       res.header('x-auth', token).send(user)
+       res.header('x-auth', token).send(result)
     })
     .catch((err)=>{
         res.status(400).send(err)
