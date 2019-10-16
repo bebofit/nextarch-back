@@ -150,6 +150,7 @@ UserSchema.pre('save', function (next) {
         let password = user.password;
         var ciphertext = CryptoJS.AES.encrypt(password, 'cabonourhanysisa1997');
         user.password = ciphertext;
+        console.log(user.password);
         next();
         // bcrypt.genSalt(10, (err, salt) => {
         //     bcrypt.hash(password, salt, (err, hash) => {
