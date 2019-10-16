@@ -16,22 +16,22 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 
 router.post('/signup',(req,res)=>{
 
-   var body = _.pick(req.body);
+   // var body = _.pick(req.body);
    let createdat = new Date();
    // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
     var user = new User({ 
-      email : body.email,
-      name: body.name,
-      dateofbirth: body.dateofbirth,
-      gender: body.gender,
-      city: body.city,
-      desc: body.desc,
-      foi: body.foi,
-      bio: body.bio,
-      softwares: body.softwares,
-      company: body.company,
-      portfolio: body.portfolio,
-      website: body.website,
+      email : req.body.email,
+      name: req.body.name,
+      dateofbirth: req.body.dateofbirth,
+      gender: req.body.gender,
+      city: req.body.city,
+      desc: req.body.desc,
+      foi: req.body.foi,
+      bio: req.body.bio,
+      softwares: req.body.softwares,
+      company: req.body.company,
+      portfolio: req.body.portfolio,
+      website: req.body.website,
       createdat
       });
 
