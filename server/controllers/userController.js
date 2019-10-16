@@ -58,4 +58,32 @@ router.delete('/me/token',authenticate,async(req,res)=>{
    }
 })
 
+
+router.post('/changePassword',authenticate, async (req, res) => {
+
+    userID = req.body.userid
+     old = req.body.old
+     newPassword = req.body.newPassword
+ 
+     let user;
+     user = await Account.findOne({ _id: userID }).exec();
+     if (!user) {
+       return res.status(400).send({ msg: 'Invalid credentials' });
+     }
+ 
+   let bytes = CryptoJS.AES.decrypt(user.password.toString(), 'cabonourhanysisa1997');
+   var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+   
+     if (plaintext != old) {
+       return res.status(400).send({ msg: 'Invalid Password' });
+ 
+     }
+     var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
+ 
+     user.password = ciphertext;
+     const resu = await user.save();
+     let result = _.pick(resu, ['email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+     return res.status(200).send({ ...result._doc });
+ })
+
 module.exports = router;
