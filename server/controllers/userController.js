@@ -10,9 +10,16 @@ var router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
+const monthNames = ["January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"
+];
+
 router.post('/signup',(req,res)=>{
-    var body = _.pick(req.body,['email','password']);
-    var user = new User(body);
+
+   //  var body = _.pick(req.body,['email','password']);
+   let createdat = new Date();
+   // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
+    var user = new User({body, createdat});
 
     user.save().then(()=>{
       return  user.generateAuthToken();

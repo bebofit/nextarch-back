@@ -1,23 +1,27 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-
-const {config} = require('../server/config/config')
-
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3005;
+var http = require('http').createServer(app);
+const mongoose = require('mongoose');
+
 app.use(bodyParser.json());
 
 var userController = require('./controllers/userController')
-var merchantController = require('./controllers/MerchantController')
-var postController = require('./controllers/postController')
-var itemController = require('./controllers/ItemController')
 
 app.use('/users', userController)
-app.use('/merchants', merchantController)
-app.use('/posts',postController)
-app.use('/items',itemController)
-app.listen(port, ()=>{
-    console.log(`started on port ${port}`);
-})
+
+mongoose.connect(
+    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch?retryWrites=true`, { useNewUrlParser: true, useUnifiedTopology: true }
+  ).catch(err => {
+    console.log(err);
+  }).then(() => {
+    console.log("Connected to MongoDB");
+
+    http.listen(port, () => {
+      console.log(`started on port ${port}`);
+    });
+  
+  });
 
 module.exports = {app}
