@@ -27,7 +27,7 @@ var UserSchema = new Schema({
         required: true
     },
     dateofbirth: {
-        type: Date,
+        type: String,
         required: true
     },
     gender: {
@@ -60,7 +60,7 @@ var UserSchema = new Schema({
         type: String
     },
     createdat:{
-        type: Date
+        type: String
     },
     tokens: [{
         access: {
