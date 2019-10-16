@@ -41,7 +41,7 @@ router.post('/signup',(req,res)=>{
     user.save().then(()=>{
       return  user.generateAuthToken();
     }).then((token)=>{
-       res.header('x-auth', token).send(result)
+       res.send({user:result, token: token})
     })
     .catch((err)=>{
         res.status(400).send(err)
@@ -59,7 +59,7 @@ router.post('/login',async(req,res)=>{
    console.log(body);
    const user = await User.findByCred(body.email,body.password)
    const token = await user.generateAuthToken()
-   res.header('x-auth', token).send(user)
+   res.send({user:user, token: token})
   } catch (error) {
    res.status(400).send();
   }
