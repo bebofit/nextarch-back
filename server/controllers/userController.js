@@ -16,10 +16,10 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 
 router.post('/signup',(req,res)=>{
 
-   //  var body = _.pick(req.body,['email','password']);
+   var body = _.pick(req.body);
    let createdat = new Date();
    // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
-    var user = new User({body, createdat});
+    var user = new User({ body, createdat});
 
     user.save().then(()=>{
       return  user.generateAuthToken();
