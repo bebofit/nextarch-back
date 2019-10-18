@@ -27,7 +27,8 @@ router.post('/creatediss', async (req, res) => {
             desc: req.body.desc,
             category: req.body.category,
             keywords: req.body.keywords,
-            imageurl: req.body.imageurl
+            imageurl: req.body.imageurl,
+            userid: req.body.userid
         }).save()
 
         res.send({
@@ -53,5 +54,7 @@ router.post('/favdisc',authenticate, async(req,res)=>{
         res.status(400).send(error);
     }
 })
+
+router
 
 module.exports = router;

@@ -18,6 +18,10 @@ var DisscusionSchema = new Schema({
    comments: [{
     type: Schema.Types.ObjectId
    }],
+   userid:{
+    type: Schema.Types.ObjectId
+
+   },
     users: [{
         type: Schema.Types.ObjectId
     }],
