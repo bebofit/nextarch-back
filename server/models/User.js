@@ -62,6 +62,21 @@ var UserSchema = new Schema({
     createdat:{
         type: String
     },
+    favdisc: [{
+        type: Schema.Types.ObjectId
+    }],
+
+    favproj: [{
+        type: Schema.Types.ObjectId
+    }],
+    followers: [{
+        type: Schema.Types.ObjectId
+
+    }],
+    following: [{
+        type: Schema.Types.ObjectId
+
+    }],
     tokens: [{
         access: {
             type: String,

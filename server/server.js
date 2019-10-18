@@ -19,8 +19,13 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 var userController = require('./controllers/userController')
+var disController = require('./controllers/disController')
+var commentController = require('./controllers/commentController')
 
 app.use('/users', userController)
+app.use('/disc', disController)
+app.use('/comment', commentController)
+
 
 mongoose.connect(
     `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch?retryWrites=true`, { useNewUrlParser: true, useUnifiedTopology: true }
