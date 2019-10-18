@@ -3,29 +3,23 @@ const Schema = mongoose.Schema;
 const validator = require('validator')
 
 var CommentSchema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        minlength: 1,
-        trim: true,
-        unique: true,
-        validate: {
-            validator: validator.isEmail,
-            message: '{value} is not an email'
-        }
-    },
-    password: {
-        type: String,
-        minlength: 6
-    },
     imageurl: {
         type: String,
         required: true
     },
     subcomments: [{
         type: Schema.Types.ObjectId
-    }]
-
+    }],
+    commentor: {
+        type: Schema.Types.ObjectId
+    },
+    desc: {
+        type: String
+    },
+    likes: {
+        type:Number,
+        default: 0
+    }
 });
 
 

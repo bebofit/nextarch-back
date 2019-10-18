@@ -57,8 +57,9 @@ router.post('/signup', (req, res) => {
 })
 
 
-router.get('/getuser', authenticate, (req, res) => {
-  res.send(req.user);
+router.get('/getuser', authenticate, async (req, res) => {
+  let user = await User.findOne({_id: req.body.id})
+  res.send(user);
 })
 
 router.post('/login', async (req, res) => {
