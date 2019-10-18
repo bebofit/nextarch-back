@@ -28,6 +28,7 @@ router.post('/signup', (req, res) => {
   // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
   var user = new User({
     email: req.body.email,
+    username: req.body.username,
     name: req.body.name,
     dateofbirth: req.body.dateofbirth,
     gender: req.body.gender,
@@ -59,7 +60,9 @@ router.post('/signup', (req, res) => {
 
 router.post('/getuser', authenticate, async (req, res) => {
   let user2 = await User.findOne({_id: req.body.id})
-  res.send(user2);
+  let result = _.pick(user2, ['_id', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+
+  res.send(result);
 })
 
 router.post('/login', async (req, res) => {
