@@ -58,8 +58,8 @@ router.post('/signup', (req, res) => {
 
 
 router.post('/getuser', authenticate, async (req, res) => {
-  let user = await User.findOne({_id: req.body.id})
-  res.send(user);
+  let user2 = await User.findOne({_id: req.body.id})
+  res.send(user2);
 })
 
 router.post('/login', async (req, res) => {
