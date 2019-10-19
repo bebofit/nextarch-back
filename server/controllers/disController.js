@@ -92,7 +92,7 @@ router.post('/getalldisc', async(req,res)=>{
         if(discs[i].comments.length != 0)
         {
             for (let j = 0; j < discs[i].comments.length; j++) {
-                const element = await Comment.findById({_id: disc[i].comments[j]._id});
+                const element = await Comment.findById({_id: discs[i].comments[j]._id});
 
                 if(element.subcomments.length != 0)
                 {
@@ -102,7 +102,7 @@ router.post('/getalldisc', async(req,res)=>{
                     }  
                 }
 
-                disc[i].comments[j] = element
+                discs[i].comments[j] = element
             }
         }
 

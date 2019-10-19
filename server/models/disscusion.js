@@ -7,7 +7,8 @@ var DisscusionSchema = new Schema({
         type: String
     },
     desc: {
-        type: String
+        type: String,
+        default: ''
     },
     category: {
         type: String
@@ -20,13 +21,16 @@ var DisscusionSchema = new Schema({
    }],
    userid:{
     type: Schema.Types.ObjectId
-
+   },
+   lastpost:{
+    type: Schema.Types.ObjectId
    },
     users: [{
         type: Schema.Types.ObjectId
     }],
     imageurl: {
-        type: String
+        type: String,
+        default: ''
     }
 
 });

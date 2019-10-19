@@ -24,10 +24,14 @@ const {
 
 router.post('/createcomment',authenticate, async(req,res)=>{
     try {
+      let createdat = new Date();
+      console.log(req.body.imageurl);
+      
         let comment = await new Comment({
             imageurl: req.body.imageurl,
             commentor: req.body.userid,
-            desc: req.body.desc
+            desc: req.body.desc,
+            createdat
         }).save()
 
         let dis = await Disscusion.findByIdAndUpdate({
@@ -37,7 +41,8 @@ router.post('/createcomment',authenticate, async(req,res)=>{
                 comments: comment._id
             }
           })
-
+          console.log(dis);
+          
         res.status(200).send({
             msg: 'created comment'
           });

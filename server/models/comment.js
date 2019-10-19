@@ -5,7 +5,7 @@ const validator = require('validator')
 var CommentSchema = new Schema({
     imageurl: {
         type: String,
-        required: true
+        default: ''
     },
     subcomments: [{
         type: Schema.Types.ObjectId
@@ -14,11 +14,16 @@ var CommentSchema = new Schema({
         type: Schema.Types.ObjectId
     },
     desc: {
-        type: String
+        type: String,
+        default: ''
     },
     likes: {
         type:Number,
         default: 0
+    },
+    createdat:{
+        type: String
+
     }
 });
 
