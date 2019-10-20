@@ -10,9 +10,9 @@ var CommentSchema = new Schema({
     subcomments: [{
         type: Schema.Types.ObjectId
     }],
-    commentor: {
+    commentor: [{
         type: Schema.Types.ObjectId
-    },
+    }],
     desc: {
         type: String,
         default: ''

@@ -118,7 +118,7 @@ UserSchema.statics.findByCred = function (email, password) {
     var User = this;
     return User.findOne({ email }).then((user) => {
         if (!user) {
-            return Promise.reject()
+            return Promise.reject('no user exist')
         }
 
         return new Promise((resolve, reject) => {
@@ -127,7 +127,7 @@ UserSchema.statics.findByCred = function (email, password) {
             var plaintext = bytes.toString(CryptoJS.enc.Utf8);
 
                 if (plaintext != password) {
-                    return Promise.reject()
+                    return Promise.reject('wrong password')
                 }
                 else {
                     resolve(user)

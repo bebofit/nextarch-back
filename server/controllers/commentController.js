@@ -28,7 +28,7 @@ router.post('/createcomment',authenticate, async(req,res)=>{
       
         let comment = await new Comment({
             imageurl: req.body.imageurl,
-            commentor: req.body.commentor,
+            commentor: [req.body.commentor],
             desc: req.body.desc,
             createdat
         }).save()
@@ -40,7 +40,6 @@ router.post('/createcomment',authenticate, async(req,res)=>{
                 comments: comment._id
             }
           })
-          console.log(dis);
           
         res.status(200).send({
             msg: 'created comment'

@@ -66,20 +66,29 @@ router.post('/getuser', authenticate, async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-  //   try {
-  const body = _.pick(req.body, ['email', 'password'])
-  console.log(body);
-  const user = await User.findByCred(body.email, body.password)
+
+  email = req.body.email
+  password = req.body.password
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    return res.status(400).send({ msg: 'No user exsist!' })
+  }
+  let bytes = CryptoJS.AES.decrypt(user.password.toString(), 'cabonourhanysisa1997');
+  var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (plaintext != password) {
+      return res.status(400).send({ msg: 'Invalid Password' });
+
+    }
+    else {
   const token = await user.generateAuthToken()
   let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
 
-  res.send({
+  return res.send({
     user: result,
     token: token
   })
-  //   } catch (error) {
-  //    res.status(400).send(error);
-  //   }
+    }
 })
 
 

@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 //midddleware
 const {
     authenticate
-  } = require('../middleware/authenticate')
+} = require('../middleware/authenticate')
 //models
 const {
     User
@@ -42,98 +42,81 @@ router.post('/creatediss', async (req, res) => {
     }
 })
 
-router.post('/favdisc',authenticate, async(req,res)=>{
+router.post('/favdisc', authenticate, async (req, res) => {
     try {
-        
-        const di = await User.findByIdAndUpdate({_id: req.body.userid}, {
+
+        const di = await User.findByIdAndUpdate({
+            _id: req.body.userid
+        }, {
             $push: {
                 favdisc: req.body.disid
             }
-         })
+        })
 
-         res.status(200).send({msg: 'done'});
+        res.status(200).send({
+            msg: 'done'
+        });
 
     } catch (error) {
         res.status(400).send(error);
     }
 })
 
-router.post('/getdiscbyid',authenticate, async(req,res)=>{
-    let discs = await Disscusion.find({userid: req.body.userid})
+router.post('/getdiscbyid', authenticate, async (req, res) => {
+    let discs = await Disscusion.find({
+        userid: req.body.userid,
+        _id: req.body.discid
+    })
 
     for (let i = 0; i < discs.length; i++) {
-        
-        if(discs[i].comments.length != 0)
-        {
+
+        if (discs[i].comments.length != 0) {
             for (let j = 0; j < discs[i].comments.length; j++) {
-                const element = await Comment.findById({_id: disc[i].comments[j]._id});
-                const user = await User.findById({_id: discs[i].comments[j].commentor});
+                const element = await Comment.findById({
+                    _id: discs[i].comments[j]._id
+                });
+                const user = await User.findById({
+                    _id: element.commentor[0]
+                });
                 let result = _.pick(user, ['_id', 'name']);
-                discs[i].comments[j].commentor = result;
+                element.commentor[0] = result;
+                // if(element.subcomments.length != 0)
+                // {
+                //     for (let k = 0; k < element.subcomments.length; k++) {
+                //         const el = await Comment.findById({_id: element.subcomments[k]._id});
+                //         element.subcomments[k] = el
+                //     }  
 
-                if(element.subcomments.length != 0)
-                {
-                    for (let k = 0; k < element.subcomments.length; k++) {
-                        const el = await Comment.findById({_id: element.subcomments[k]._id});
-                        element.subcomments[k] = el
-                    }  
+
+                // }
+
+                discs[i].comments[j] = element
+            }
+            if (discs[i].users.length != 0) {
+                for (let k = 0; k < discs[i].users.length; k++) {
+                    const el = await User.findById({
+                        _id: discs[i].users[k]._id
+                    });
+                    let result = _.pick(el, ['_id', 'name']);
+                    discs[i].users[k] = result
                 }
-
-                disc[i].comments[j] = element
             }
-        }
-        if(discs[i].users.length != 0)
-        {
-            for (let k = 0; k <  discs[i].users.length; k++) {
-                const el = await User.findById({_id: discs[i].users[k]._id});
-                let result = _.pick(el, ['_id', 'name']);
-                discs[i].users[k] = result
-            }
-        }
 
+        }
     }
     res.status(200).send(discs);
 })
 
-router.post('/getalldisc', async(req,res)=>{
+router.post('/getalldisc', async (req, res) => {
     let discs = await Disscusion.find({})
 
     for (let i = 0; i < discs.length; i++) {
-        const muser = await User.findById({_id: discs[i].userid[0]});
-        let result = _.pick(muser, ['_id', 'name']);
-        discs[i].userid[0] = result;
-
-        if(discs[i].comments.length != 0)
-        {
-            for (let j = 0; j < discs[i].comments.length; j++) {
-                const element = await Comment.findById({_id: discs[i].comments[j]._id});
-                const user = await User.findById({_id: discs[i].comments[j].commentor});
-                let result = _.pick(user, ['_id', 'name']);
-                discs[i].comments[j].commentor = result;
-                if(element.subcomments.length != 0)
-                {
-                    for (let k = 0; k < element.subcomments.length; k++) {
-                        const el = await Comment.findById({_id: element.subcomments[k]._id});
-                        element.subcomments[k] = el
-                    }  
-
-
-                }
-
-                discs[i].comments[j] = element
-            }
-        
-
-        }
-        if(discs[i].users.length != 0)
-        {
-            for (let k = 0; k <  discs[i].users.length; k++) {
-                const el = await User.findById({_id: discs[i].users[k]._id});
-                let result = _.pick(el, ['_id', 'name']);
-                discs[i].users[k] = result
-            }
-        }
-    }
+        const muser = await User.findById({
+            _id: discs[i].userid[0]
+        });
+        let result = _.pick(discs[i], ['_id', 'desc', 'title', 'category']);
+        discs[i] = result;
+    }    
     res.status(200).send(discs);
 })
 
