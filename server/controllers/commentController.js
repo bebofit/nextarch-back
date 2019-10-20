@@ -28,7 +28,7 @@ router.post('/createcomment',authenticate, async(req,res)=>{
       
         let comment = await new Comment({
             imageurl: req.body.imageurl,
-            commentor: req.body.userid,
+            commentor: req.body.commentor,
             desc: req.body.desc,
             createdat
         }).save()
