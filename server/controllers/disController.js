@@ -99,9 +99,9 @@ router.post('/getalldisc', async(req,res)=>{
     let discs = await Disscusion.find({})
 
     for (let i = 0; i < discs.length; i++) {
-        const muser = await User.findById({_id: discs[i].userid});
+        const muser = await User.findById({_id: discs[i].userid[0]});
         let result = _.pick(muser, ['_id', 'name']);
-        discs[i].userid = result;
+        discs[i].userid[0] = result;
 
         if(discs[i].comments.length != 0)
         {

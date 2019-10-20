@@ -19,9 +19,9 @@ var DisscusionSchema = new Schema({
    comments: [{
     type: Schema.Types.ObjectId
    }],
-   userid:{
+   userid:[{
     type: Schema.Types.ObjectId
-   },
+   }],
    lastpost:{
     type: Schema.Types.ObjectId
    },
