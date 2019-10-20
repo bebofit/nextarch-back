@@ -25,7 +25,6 @@ const {
 router.post('/createcomment',authenticate, async(req,res)=>{
     try {
       let createdat = new Date();
-      console.log(req.body.imageurl);
       
         let comment = await new Comment({
             imageurl: req.body.imageurl,

@@ -67,6 +67,9 @@ router.post('/getdiscbyid',authenticate, async(req,res)=>{
         {
             for (let j = 0; j < discs[i].comments.length; j++) {
                 const element = await Comment.findById({_id: disc[i].comments[j]._id});
+                const user = await User.findById({_id: discs[i].comments[j].commentor});
+                let result = _.pick(user, ['_id', 'name']);
+                discs[i].comments[j].commentor = result;
 
                 if(element.subcomments.length != 0)
                 {
@@ -77,6 +80,14 @@ router.post('/getdiscbyid',authenticate, async(req,res)=>{
                 }
 
                 disc[i].comments[j] = element
+            }
+        }
+        if(discs[i].users.length != 0)
+        {
+            for (let k = 0; k <  discs[i].users.length; k++) {
+                const el = await User.findById({_id: discs[i].users[k]._id});
+                let result = _.pick(el, ['_id', 'name']);
+                discs[i].users[k] = result
             }
         }
 
@@ -93,19 +104,32 @@ router.post('/getalldisc', async(req,res)=>{
         {
             for (let j = 0; j < discs[i].comments.length; j++) {
                 const element = await Comment.findById({_id: discs[i].comments[j]._id});
-
+                const user = await User.findById({_id: discs[i].comments[j].commentor});
+                let result = _.pick(user, ['_id', 'name']);
+                discs[i].comments[j].commentor = result;
                 if(element.subcomments.length != 0)
                 {
                     for (let k = 0; k < element.subcomments.length; k++) {
                         const el = await Comment.findById({_id: element.subcomments[k]._id});
                         element.subcomments[k] = el
                     }  
+
+
                 }
 
                 discs[i].comments[j] = element
             }
-        }
+        
 
+        }
+        if(discs[i].users.length != 0)
+        {
+            for (let k = 0; k <  discs[i].users.length; k++) {
+                const el = await User.findById({_id: discs[i].users[k]._id});
+                let result = _.pick(el, ['_id', 'name']);
+                discs[i].users[k] = result
+            }
+        }
     }
     res.status(200).send(discs);
 })
