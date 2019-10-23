@@ -64,7 +64,6 @@ router.post('/favdisc', authenticate, async (req, res) => {
 
 router.post('/getdiscbyid', authenticate, async (req, res) => {
     let discs = await Disscusion.find({
-        userid: [req.body.userid] ,
         _id: req.body.discid
     })
 
