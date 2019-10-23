@@ -5,7 +5,7 @@ const validator = require('validator')
 var CommentSchema = new Schema({
     imageurl: {
         type: String,
-        default: ''
+        default: 'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/prof.png?alt=media&token=42254eca-ee3f-42d1-83e1-7e64eb3d3acb'
     },
     subcomments: [{
         type: Schema.Types.ObjectId

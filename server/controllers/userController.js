@@ -103,6 +103,14 @@ router.delete('/me/token', authenticate, async (req, res) => {
   }
 })
 
+router.post('/img', authenticate, async (req, res) => {
+  try {
+    let user = await User.findByIdAndUpdate({_id: req.body.id}, {imageurl: req.body.imgurl})
+    res.send({msg: 'done'})
+  } catch (error) {
+    res.status(400).send()
+  }
+})
 
 router.post('/changePassword', authenticate, async (req, res) => {
 
