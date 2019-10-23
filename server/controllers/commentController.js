@@ -37,7 +37,8 @@ router.post('/createcomment',authenticate, async(req,res)=>{
             _id: req.body.disid
           }, {
             $push: {
-                comments: comment._id
+                comments: comment._id,
+                users: req.body.commentor
             }
           })
           
