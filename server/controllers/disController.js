@@ -64,7 +64,7 @@ router.post('/favdisc', authenticate, async (req, res) => {
 
 router.post('/getdiscbyid', authenticate, async (req, res) => {
     let discs = await Disscusion.find({
-        userid: req.body.userid,
+        userid: { "$in" : [req.body.userid]} ,
         _id: req.body.discid
     })
 
@@ -109,7 +109,7 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
 
 router.post('/getmydiscs', authenticate, async (req, res) => {
     let discs = await Disscusion.find({
-        userid: req.body.userid
+        userid: { "$in" : [req.body.userid]} 
     })
 
     for (let i = 0; i < discs.length; i++) {
