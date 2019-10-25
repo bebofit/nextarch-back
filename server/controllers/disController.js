@@ -169,4 +169,44 @@ router.post('/getalldisc', async (req, res) => {
     res.status(200).send(discs);
 })
 
+router.post('/stardisc',authenticate, async(req,res)=>{
+    try {
+
+        let dis = await User.findByIdAndUpdate({
+            _id: req.body.userid
+          }, {
+            $addToSet: {
+                favdisc: req.body.disid
+            }
+          })
+          
+        res.status(200).send({
+            msg: 'starred disc'
+          });
+    
+    } catch (error) {
+        res.status(400).send(error)
+    }
+})
+
+router.post('/unstardisc',authenticate, async(req,res)=>{
+    try {
+
+        let dis = await User.findByIdAndUpdate({
+            _id: req.body.userid
+          }, {
+            $pop: {
+                favdisc: req.body.disid
+            }
+          })
+          
+        res.status(200).send({
+            msg: 'starred disc'
+          });
+    
+    } catch (error) {
+        res.status(400).send(error)
+    }
+})
+
 module.exports = router;

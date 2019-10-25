@@ -37,8 +37,10 @@ router.post('/createcomment',authenticate, async(req,res)=>{
             _id: req.body.disid
           }, {
             $push: {
-                comments: comment._id,
-                users: req.body.commentor
+                comments: comment._id
+            },
+            $addToSet: {
+              users: req.body.commentor
             }
           })
           
@@ -75,6 +77,46 @@ router.post('/createsubcomment',authenticate, async(req,res)=>{
     } catch (error) {
         res.status(400).send(error)
     }
+})
+
+router.post('/likecomment',authenticate, async(req,res)=>{
+  try {
+
+      let maincomment = await Comment.findByIdAndUpdate({
+          _id: req.body.id
+        }, {
+          $inc: {
+            likes: 1
+          }
+        })
+
+        res.status(200).send({
+          msg: 'liked'
+        });
+  
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+router.post('/unlikecomment',authenticate, async(req,res)=>{
+  try {
+
+      let maincomment = await Comment.findByIdAndUpdate({
+          _id: req.body.id
+        }, {
+          $inc: {
+            likes: -1
+          }
+        })
+
+        res.status(200).send({
+          msg: 'liked'
+        });
+  
+  } catch (error) {
+      res.status(400).send(error)
+  }
 })
 
 module.exports = router;
