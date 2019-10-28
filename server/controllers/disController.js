@@ -36,27 +36,6 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-router.post('/favdisc', authenticate, async (req, res) => {
-  try {
-    const di = await User.findByIdAndUpdate(
-      {
-        _id: req.body.userid
-      },
-      {
-        $push: {
-          favdisc: req.body.disid
-        }
-      }
-    );
-
-    res.status(200).send({
-      msg: 'done'
-    });
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
 router.post('/getdiscbyid', authenticate, async (req, res) => {
   let discs = await Disscusion.find({
     _id: req.body.discid
@@ -117,45 +96,25 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
   res.status(200).send(discs);
 });
 
-router.post('/getmydiscs', authenticate, async (req, res) => {
-  let discs = await Disscusion.find({
-    userid: [req.body.userid]
-  });
-
-  for (let i = 0; i < discs.length; i++) {
-    if (discs[i].comments.length != 0) {
-      for (let j = 0; j < discs[i].comments.length; j++) {
-        const element = await Comment.findById({
-          _id: discs[i].comments[j]._id
-        });
-        const user = await User.findById({
-          _id: element.commentor[0]
-        });
-        let result = _.pick(user, ['_id', 'name']);
-        element.commentor[0] = result;
-        // if(element.subcomments.length != 0)
-        // {
-        //     for (let k = 0; k < element.subcomments.length; k++) {
-        //         const el = await Comment.findById({_id: element.subcomments[k]._id});
-        //         element.subcomments[k] = el
-        //     }
-
-        // }
-
-        discs[i].comments[j] = element;
-      }
-      if (discs[i].users.length != 0) {
-        for (let k = 0; k < discs[i].users.length; k++) {
-          const el = await User.findById({
-            _id: discs[i].users[k]._id
-          });
-          let result = _.pick(el, ['_id', 'name']);
-          discs[i].users[k] = result;
-        }
-      }
+router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
+  try {
+    let finalStarredDiscs = []
+    const user = await User.findById({_id:req.body.userId});
+    for (let i = 0; i < user.favdisc.length; i++) {
+      const discussion = await Disscusion.findById({_id: user.favdisc[i]});
+      const filteredDisc = _.pick(discussion, [
+        '_id',
+        'desc',
+        'title',
+        'category'
+      ]);
+      finalStarredDiscs.push(filteredDisc);
     }
+    res.status(200).send(data:{finalStarredDiscs})
+  } catch (error) {
+    res.status(400).send(error);
   }
-  res.status(200).send(discs);
+
 });
 
 router.post('/getalldisc', async (req, res) => {
