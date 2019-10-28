@@ -33,6 +33,9 @@ var DisscusionSchema = new Schema({
     imageurl: {
         type: String,
         default: ''
+    },
+    status:{
+        type: Number
     }
 
 });

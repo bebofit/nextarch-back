@@ -72,8 +72,24 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
         const muser = await User.findById({
             _id: discs[i].userid[0]
         });
+        
         let result = _.pick(muser, ['_id', 'name']);
         discs[i].userid[0] = result;
+
+        //To check if starred or not
+        disc[i].status = 0
+        if(muser.favdisc.length !=0)
+        {
+            for (let i = 0; i < muser.favdisc..length; i++) {
+                const discidTemp = muser.favdisc.[i];
+                if(discidTemp == req.body.discid)
+                {
+                    disc[i].status = 1;
+                    break;
+                }
+                
+            }
+        }
 
         if (discs[i].comments.length != 0) {
             for (let j = 0; j < discs[i].comments.length; j++) {

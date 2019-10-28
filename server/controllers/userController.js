@@ -43,7 +43,7 @@ router.post('/signup', (req, res) => {
     password: ciphertext,
     createdat
   });
-  let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+  let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc']);
   user.save().then(() => {
       return user.generateAuthToken();
     }).then((token) => {
@@ -60,7 +60,7 @@ router.post('/signup', (req, res) => {
 
 router.post('/getuser', authenticate, async (req, res) => {
   let user2 = await User.findOne({_id: req.body.id})
-  let result = _.pick(user2, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+  let result = _.pick(user2, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc']);
 
   res.send(result);
 })
@@ -82,8 +82,8 @@ router.post('/login', async (req, res) => {
     }
     else {
   const token = await user.generateAuthToken()
-  let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
-
+  let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc']);
+ 
   return res.send({
     user: result,
     token: token
@@ -141,7 +141,7 @@ router.post('/changePassword', authenticate, async (req, res) => {
 
   user.password = ciphertext;
   const resu = await user.save();
-  let result = _.pick(resu, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat']);
+  let result = _.pick(resu, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc']);
   return res.status(200).send({
     ...result._doc
   });
