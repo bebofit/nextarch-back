@@ -26,8 +26,7 @@ var DisscusionSchema = new Schema({
     type: Schema.Types.ObjectId
    },
     users: [{
-        type: Schema.Types.ObjectId,
-        unique: true
+        type: Schema.Types.ObjectId
 
     }],
     imageurl: {
