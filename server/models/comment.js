@@ -25,7 +25,7 @@ var CommentSchema = new Schema({
         type: String
 
     }
-});
+}, {timestamps: true});
 
 
 var Comment = mongoose.model('Comment', CommentSchema)

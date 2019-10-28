@@ -36,9 +36,12 @@ var DisscusionSchema = new Schema({
     },
     status:{
         type: Number
+    },
+    lastCommentUserName:{
+        type: String
     }
 
-});
+} ,{timestamps: true});
 
 
 var Disscusion = mongoose.model('Disscusion', DisscusionSchema)
