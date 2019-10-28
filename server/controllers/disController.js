@@ -163,10 +163,12 @@ router.post('/getalldisc', async (req, res) => {
         const muser = await User.findById({
             _id: discs[i].userid[0]
         });
+        const lastPostUser = await User.findById({_id: discs[i].comments.pop()});
+        let lastPostUserName = _.pick(lastPostUser, [ 'name']); 
         let result = _.pick(discs[i], ['_id', 'desc', 'title', 'category']);
         discs[i] = result;
     }    
-    res.status(200).send(discs);
+    res.status(200).send({discs, lastPostUserName});
 })
 
 router.post('/stardisc',authenticate, async(req,res)=>{
