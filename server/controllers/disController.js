@@ -80,8 +80,8 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
         disc[i].status = 0
         if(muser.favdisc.length !=0)
         {
-            for (let i = 0; i < muser.favdisc..length; i++) {
-                const discidTemp = muser.favdisc.[i];
+            for (let i = 0; i < muser.favdisc.length; i++) {
+                const discidTemp = muser.favdisc[i];
                 if(discidTemp == req.body.discid)
                 {
                     disc[i].status = 1;
