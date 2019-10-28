@@ -98,10 +98,10 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
 
 router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
   try {
-    let finalStarredDiscs = []
-    const user = await User.findById({_id:req.body.userId});
+    let finalStarredDiscs = [];
+    const user = await User.findById({ _id: req.body.userId });
     for (let i = 0; i < user.favdisc.length; i++) {
-      const discussion = await Disscusion.findById({_id: user.favdisc[i]});
+      const discussion = await Disscusion.findById({ _id: user.favdisc[i] });
       const filteredDisc = _.pick(discussion, [
         '_id',
         'desc',
@@ -110,11 +110,10 @@ router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
       ]);
       finalStarredDiscs.push(filteredDisc);
     }
-    res.status(200).send(data:{finalStarredDiscs})
+    res.status(200).send({ data: finalStarredDiscs });
   } catch (error) {
     res.status(400).send(error);
   }
-
 });
 
 router.post('/getalldisc', async (req, res) => {
