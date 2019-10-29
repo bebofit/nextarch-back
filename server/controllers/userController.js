@@ -1,5 +1,6 @@
 const { User } = require('../models/User');
 const { authenticate } = require('../middleware/authenticate');
+const { Disscusion } = require('../models/Disscusion');
 var CryptoJS = require('crypto-js');
 
 var express = require('express');
@@ -339,5 +340,17 @@ router.post('/unfollow', authenticate, async (req, res) => {
     });
   }
 });
+
+router.post('/search',authenticate, async (req, res) => {
+  try{
+    const discussions = await Disscusion.find({keywords: req.body.search})
+    const users = await User.find({$or:[{username: {$regex: req.body.search}}, {name: {$regex: req.body.search}}]})
+    res.status(200).send({discussions, users})
+  } catch (error) {
+    res.status(400).send({
+      msg: 'error ya sisa'
+    });
+  }
+})
 
 module.exports = router;
