@@ -77,7 +77,10 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
           _id: mainComment.commentor[0]
         });
         for (let k = 0; k < mainComment.likesarray.length; k++) {
-          if(mainComment.likesarray[k] == req.body.userId){mainComment.status = 1;break;}
+          if (mainComment.likesarray[k] == req.body.userId) {
+            mainComment.status = 1;
+            break;
+          }
           mainComment.status = 0;
         }
         let result = _.pick(user, ['_id', 'name']);
@@ -150,7 +153,8 @@ router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
         '_id',
         'desc',
         'title',
-        'category'
+        'category',
+        'createdAt'
       ]);
       finalStarredDiscs.push(filteredDisc);
     }
