@@ -70,7 +70,9 @@ router.post('/signup', (req, res) => {
     'portfolio',
     'website',
     'createdat',
-    'favdisc'
+    'favdisc',
+    'following',
+    'followers'
   ]);
   user
     .save()
@@ -107,7 +109,9 @@ router.post('/getuser', authenticate, async (req, res) => {
     'portfolio',
     'website',
     'createdat',
-    'favdisc'
+    'favdisc',
+    'following',
+    'followers'
   ]);
 
   res.send(result);
@@ -139,7 +143,9 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
     'website',
     'createdat',
     'favdisc',
-    'status'
+    'status',
+    'following',
+    'followers'
   ]);
 
   res.send(result);
@@ -178,7 +184,9 @@ router.post('/login', async (req, res) => {
       'portfolio',
       'website',
       'createdat',
-      'favdisc'
+      'favdisc',
+      'following',
+      'followers'
     ]);
 
     return res.send({
@@ -257,7 +265,9 @@ router.post('/changePassword', authenticate, async (req, res) => {
     'portfolio',
     'website',
     'createdat',
-    'favdisc'
+    'favdisc',
+    'following',
+    'followers'
   ]);
   return res.status(200).send({
     ...result._doc
