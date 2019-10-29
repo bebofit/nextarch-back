@@ -60,7 +60,23 @@ router.post('/signup', (req, res) => {
 
 router.post('/getuser', authenticate, async (req, res) => {
   let user2 = await User.findOne({_id: req.body.id})
+
   let result = _.pick(user2, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc']);
+
+  res.send(result);
+})
+
+router.post('/getOtherUser', authenticate, async (req, res) => {
+  let user = await User.findOne({_id: req.body.userId})
+  for (let i = 0; i < user.following.length; i++) {
+    if(user.following[i] == req.body.otherUserId)
+    {
+      user.status = 1;
+      break;
+    }
+  
+  }
+  let result = _.pick(user, ['_id','username', 'email', 'name', 'dateofbirth', 'gender', 'city', 'desc', 'foi', 'bio', 'softwares', 'company', 'portfolio', 'website', 'createdat', 'favdisc'. 'status']);
 
   res.send(result);
 })
