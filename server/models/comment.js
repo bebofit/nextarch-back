@@ -21,9 +21,16 @@ var CommentSchema = new Schema({
         type:Number,
         default: 0
     },
+    likesarray: [{
+        type:Schema.Types.ObjectId
+        }],
     createdat:{
         type: String
 
+    },
+    status:{
+        type: Number,
+        default: 0
     }
 }, {timestamps: true});
 

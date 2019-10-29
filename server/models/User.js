@@ -97,7 +97,7 @@ var UserSchema = new Schema({
     },
     status: {
         type: Number,
-        default: 0;
+        default: 0
     }
 }, {timestamps: true});
 

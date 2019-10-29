@@ -36,7 +36,6 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-
 router.post('/getdiscbyid', authenticate, async (req, res) => {
   let discs = await Disscusion.find({
     _id: req.body.discid
@@ -51,11 +50,18 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
     discs[i].userid[0] = result;
 
     //To check if starred or not
+
+    const user = await User.findById({
+      _id: req.body.userId
+    });
+
     discs[i].status = 0;
-    if (muser.favdisc.length != 0) {
-      for (let i = 0; i < muser.favdisc.length; i++) {
-        const discidTemp = muser.favdisc[i];
+    if (user.favdisc.length != 0) {
+      for (let i = 0; i < user.favdisc.length; i++) {
+        const discidTemp = user.favdisc[i];
         if (discidTemp == req.body.discid) {
+          console.log(discidTemp);
+          console.log(req.body.discid);
           discs[i].status = 1;
           break;
         }
@@ -64,24 +70,20 @@ router.post('/getdiscbyid', authenticate, async (req, res) => {
 
     if (discs[i].comments.length != 0) {
       for (let j = 0; j < discs[i].comments.length; j++) {
-        const element = await Comment.findById({
+        const mainComment = await Comment.findById({
           _id: discs[i].comments[j]._id
         });
         const user = await User.findById({
-          _id: element.commentor[0]
+          _id: mainComment.commentor[0]
         });
+        for (let k = 0; k < mainComment.likesarray.length; k++) {
+          if(mainComment.likesarray[k] == req.body.userId){mainComment.status = 1;break;}
+          mainComment.status = 0;
+        }
         let result = _.pick(user, ['_id', 'name']);
-        element.commentor[0] = result;
-        // if(element.subcomments.length != 0)
-        // {
-        //     for (let k = 0; k < element.subcomments.length; k++) {
-        //         const el = await Comment.findById({_id: element.subcomments[k]._id});
-        //         element.subcomments[k] = el
-        //     }
+        mainComment.commentor[0] = result;
 
-        // }
-
-        discs[i].comments[j] = element;
+        discs[i].comments[j] = mainComment;
       }
       if (discs[i].users.length != 0) {
         for (let k = 0; k < discs[i].users.length; k++) {

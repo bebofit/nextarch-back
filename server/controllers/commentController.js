@@ -87,6 +87,9 @@ router.post('/likecomment',authenticate, async(req,res)=>{
         }, {
           $inc: {
             likes: 1
+          },
+          $push:{
+            likesarray: req.body.userId
           }
         })
 
@@ -107,6 +110,9 @@ router.post('/unlikecomment',authenticate, async(req,res)=>{
         }, {
           $inc: {
             likes: -1
+          },
+          $pull:{
+            likesarray: req.body.userId
           }
         })
 
