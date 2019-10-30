@@ -32,7 +32,7 @@ const monthNames = [
 
 router.post('/signup', (req, res) => {
   // var body = _.pick(req.body);
-  let createdat = new Date();
+  let createdAt = new Date();
   var ciphertext = CryptoJS.AES.encrypt(
     req.body.password,
     'cabonourhanysisa1997'
@@ -53,7 +53,7 @@ router.post('/signup', (req, res) => {
     portfolio: req.body.portfolio,
     website: req.body.website,
     password: ciphertext,
-    createdat
+    createdAt
   });
   let result = _.pick(user, [
     '_id',
@@ -70,7 +70,7 @@ router.post('/signup', (req, res) => {
     'company',
     'portfolio',
     'website',
-    'createdat',
+    'createdAt',
     'favdisc',
     'following',
     'followers'
@@ -109,7 +109,7 @@ router.post('/getuser', authenticate, async (req, res) => {
     'company',
     'portfolio',
     'website',
-    'createdat',
+    'createdAt',
     'favdisc',
     'following',
     'followers'
@@ -142,7 +142,7 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
     'company',
     'portfolio',
     'website',
-    'createdat',
+    'createdAt',
     'favdisc',
     'status',
     'following',
@@ -184,7 +184,7 @@ router.post('/login', async (req, res) => {
       'company',
       'portfolio',
       'website',
-      'createdat',
+      'createdAt',
       'favdisc',
       'following',
       'followers'
@@ -265,7 +265,7 @@ router.post('/changePassword', authenticate, async (req, res) => {
     'company',
     'portfolio',
     'website',
-    'createdat',
+    'createdAt',
     'favdisc',
     'following',
     'followers'
@@ -343,14 +343,38 @@ router.post('/unfollow', authenticate, async (req, res) => {
 
 router.post('/search', authenticate, async (req, res) => {
   try {
+    let finalUsers = []
     const search = req.body.search;
     const discussions = await Disscusion.find({
-      keywords: { $regex: /.*search.*/ }
+      keywords: new RegExp(search)
     });
     const users = await User.find({
-      username: { $regex: /.*search.*/, $options: 'i' }
+      $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
     });
-    res.status(200).send({ discussions, users });
+    for (let i = 0; i < users.length; i++) {
+      let filteredUser = _.pick(users[i], [
+        '_id',
+        'username',
+        'email',
+        'name',
+        'dateofbirth',
+        'gender',
+        'city',
+        'desc',
+        'foi',
+        'bio',
+        'softwares',
+        'company',
+        'portfolio',
+        'website',
+        'createdAt',
+        'favdisc',
+        'following',
+        'followers'
+      ])
+      finalUsers.push(filteredUser);
+    }
+    res.status(200).send({ discussions, finalUsers });
   } catch (error) {
     res.status(400).send({
       msg: 'error ya sisa'
