@@ -107,7 +107,7 @@ var UserSchema = new Schema(
     imageurl: {
       type: String,
       default:
-        'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/prof.png?alt=media&token=42254eca-ee3f-42d1-83e1-7e64eb3d3acb'
+      'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/uploads%2Fprof.png?alt=media&token=8a4582af-f778-44ab-93ca-0c32e09c0540'
     },
     status: {
       type: Number,

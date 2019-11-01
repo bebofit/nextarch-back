@@ -73,7 +73,8 @@ router.post('/signup', (req, res) => {
     'createdAt',
     'favdisc',
     'following',
-    'followers'
+    'followers',
+    'imageurl'
   ]);
   user
     .save()
@@ -112,7 +113,8 @@ router.post('/getuser', authenticate, async (req, res) => {
     'createdAt',
     'favdisc',
     'following',
-    'followers'
+    'followers',
+    'imageurl'
   ]);
 
   res.send(result);
@@ -146,7 +148,8 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
     'favdisc',
     'status',
     'following',
-    'followers'
+    'followers',
+    'imageurl'
   ]);
 
   res.send(result);
@@ -187,7 +190,8 @@ router.post('/login', async (req, res) => {
       'createdAt',
       'favdisc',
       'following',
-      'followers'
+      'followers',
+      'imageurl'
     ]);
 
     return res.send({
@@ -268,11 +272,35 @@ router.post('/changePassword', authenticate, async (req, res) => {
     'createdAt',
     'favdisc',
     'following',
-    'followers'
+    'followers',
+    'imageurl'
   ]);
   return res.status(200).send({
     ...result._doc
   });
+});
+
+router.post('/updateimage', authenticate, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      {
+        _id: req.body.userid
+      },
+      {
+        imageurl: req.body.imageurl
+      },
+      { new: true }
+    );
+    res.status(200).send({
+      msg: req.body.imageurl
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(400).send({
+      msg: error
+    });
+  }
 });
 
 router.post('/follow', authenticate, async (req, res) => {
@@ -343,7 +371,7 @@ router.post('/unfollow', authenticate, async (req, res) => {
 
 router.post('/search', authenticate, async (req, res) => {
   try {
-    let finalUsers = []
+    let finalUsers = [];
     const search = req.body.search;
     const discussions = await Disscusion.find({
       keywords: new RegExp(search)
@@ -371,7 +399,7 @@ router.post('/search', authenticate, async (req, res) => {
         'favdisc',
         'following',
         'followers'
-      ])
+      ]);
       finalUsers.push(filteredUser);
     }
     res.status(200).send({ discussions, finalUsers });
