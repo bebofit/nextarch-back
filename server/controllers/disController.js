@@ -13,7 +13,7 @@ router.use(bodyParser.json());
 const { authenticate } = require('../middleware/authenticate');
 //models
 const { User } = require('../models/User');
-const { Disscusion } = require('../models/Disscusion');
+const { Disscusion } = require('../models/disscusion');
 const { Comment } = require('../models/comment');
 
 router.post('/creatediss', async (req, res) => {

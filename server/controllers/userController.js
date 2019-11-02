@@ -1,6 +1,6 @@
 const { User } = require('../models/User');
 const { authenticate } = require('../middleware/authenticate');
-const { Disscusion } = require('../models/Disscusion');
+const { Disscusion } = require('../models/disscusion');
 var CryptoJS = require('crypto-js');
 
 var express = require('express');
