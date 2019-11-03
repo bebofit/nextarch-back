@@ -43,34 +43,14 @@ var UserSchema = new Schema(
       type: String,
       required: true
     },
-    desc: {
-      type: String
-    },
-    foi: [
-      {
-        type: String
-      }
-    ],
-    bio: {
-      type: String
-    },
-    softwares: [
-      {
-        type: String
-      }
-    ],
-    company: {
-      type: String
-    },
-    portfolio: {
-      type: String
-    },
-    website: {
-      type: String
-    },
-    createdat: {
-      type: String
-    },
+    desc: String,
+    foi: [String],
+    bio: String,
+    softwares: [String],
+    company: String,
+    portfolio: String,
+    website: String,
+    createdat: String,
     favdisc: [
       {
         type: Schema.Types.ObjectId
@@ -107,12 +87,13 @@ var UserSchema = new Schema(
     imageurl: {
       type: String,
       default:
-      'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/uploads%2Fprof.png?alt=media&token=8a4582af-f778-44ab-93ca-0c32e09c0540'
+        'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/uploads%2Fprof.png?alt=media&token=8a4582af-f778-44ab-93ca-0c32e09c0540'
     },
     status: {
       type: Number,
       default: 0
-    }
+    },
+    securityQuestion: { type: String, required: true }
   },
   { timestamps: true }
 );

@@ -52,6 +52,7 @@ router.post('/signup', (req, res) => {
     company: req.body.company,
     portfolio: req.body.portfolio,
     website: req.body.website,
+    securityQuestion: req.body.securityQuestion,
     password: ciphertext,
     createdAt
   });
@@ -408,6 +409,64 @@ router.post('/search', authenticate, async (req, res) => {
       msg: 'error ya sisa'
     });
   }
+});
+
+router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.body.userId });
+    if (user.securityQuestion === req.body.securityQuestion) {
+      res.status(200).send({ data: true });
+    } else {
+      res.status(200).send({ data: false });
+    }
+  } catch (error) {
+    res.status(400).send({
+      msg: error
+    });
+  }
+});
+
+router.post('/forgotPassword', authenticate, async (req, res) => {
+  userID = req.body.userid;
+  newPassword = req.body.password;
+
+  let user;
+  user = await Account.findOne({
+    _id: userID
+  }).exec();
+  if (!user) {
+    return res.status(400).send({
+      msg: 'Invalid credentials'
+    });
+  }
+  var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
+
+  user.password = ciphertext;
+  const resu = await user.save();
+  let result = _.pick(resu, [
+    '_id',
+    'username',
+    'email',
+    'name',
+    'dateofbirth',
+    'gender',
+    'city',
+    'desc',
+    'foi',
+    'bio',
+    'softwares',
+    'company',
+    'portfolio',
+    'website',
+    'createdAt',
+    'favdisc',
+    'following',
+    'followers',
+    'imageurl'
+  ]);
+  return res.status(200).send({
+    ...result._doc
+  });
 });
 
 module.exports = router;
