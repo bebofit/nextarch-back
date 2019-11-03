@@ -53,6 +53,7 @@ router.post('/signup', (req, res) => {
     portfolio: req.body.portfolio,
     website: req.body.website,
     securityQuestion: req.body.securityQuestion,
+    securityQuestionAnswer: req.body.securityQuestionAnswer,
     password: ciphertext,
     createdAt
   });
@@ -413,8 +414,11 @@ router.post('/search', authenticate, async (req, res) => {
 
 router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.body.userId });
-    if (user.securityQuestion === req.body.securityQuestion) {
+    const user = await User.findById({ _id: req.body.email });
+    if (!user) {
+      return res.status(401).send("user doesn't exist");
+    }
+    if (user.securityQuestionAnswer === req.body.securityQuestionAnswer) {
       res.status(200).send({ data: true });
     } else {
       res.status(200).send({ data: false });

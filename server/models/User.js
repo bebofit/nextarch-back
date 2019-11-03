@@ -93,7 +93,8 @@ var UserSchema = new Schema(
       type: Number,
       default: 0
     },
-    securityQuestion: { type: String, required: true }
+    securityQuestion: { type: String, required: true },
+    securityQuestionAnswer: { type: String, required: true }
   },
   { timestamps: true }
 );
