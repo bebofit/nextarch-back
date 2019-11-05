@@ -154,7 +154,8 @@ router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
         'desc',
         'title',
         'category',
-        'createdAt'
+        'createdAt',
+        'imageurl'
       ]);
       finalStarredDiscs.push(filteredDisc);
     }
@@ -190,7 +191,8 @@ router.post('/getalldisc', async (req, res) => {
       'desc',
       'title',
       'category',
-      'lastCommentUserName'
+      'lastCommentUserName',
+      'imageurl'
     ]);
     discs[i] = result;
   }
@@ -243,7 +245,7 @@ router.post('/updateimage', authenticate, async (req, res) => {
   try {
     const user = await Disscusion.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.discId
       },
       {
         imageurl: req.body.imageurl

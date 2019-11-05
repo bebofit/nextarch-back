@@ -124,4 +124,25 @@ router.post('/unlikecomment', authenticate, async (req, res) => {
   }
 });
 
+router.post('/updateimage', authenticate, async (req, res) => {
+  try {
+    const user = await Comment.findByIdAndUpdate(
+      {
+        _id: req.body.commId
+      },
+      {
+        imageurl: req.body.imageurl
+      },
+      { new: true }
+    );
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+
+    res.status(400).send({
+      msg: error
+    });
+  }
+});
+
 module.exports = router;
