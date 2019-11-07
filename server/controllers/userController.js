@@ -376,7 +376,7 @@ router.post('/search', authenticate, async (req, res) => {
     let finalUsers = [];
     const search = req.body.search;
     const discussions = await Disscusion.find({
-      keywords: new RegExp(search)
+      $or:[{keywords: new RegExp(search)}, {title: new RegExp(search)}, {desc: new RegExp(search)}]
     });
     const users = await User.find({
       $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
