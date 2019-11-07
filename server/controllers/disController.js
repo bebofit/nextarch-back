@@ -262,4 +262,33 @@ router.post('/updateimage', authenticate, async (req, res) => {
   }
 });
 
+router.post('/trending', authenticate, async (req, res) => {
+  let finalDiscs = [];
+  const discs = await Disscusion.find({});
+  for (let i = 0; i < discs.length; i++) {
+    for (let j = 0; j < discs.length - i; i++) {
+      if (discs[j].users.length < discs[j + 1].users.length) {
+        const temp = discs[j];
+        discs[j] = discs[j + 1];
+        discs[j + 1] = temp;
+      }
+    }
+  }
+  for (let k = 0; k < 5; k++) {
+    if (k >= discs.length) break;
+    finalDiscs.push(discs[k]);
+  }
+  return res.status(200).send({ discs: finalDiscs });
+});
+
+router.post('/latest', authenticate, async (req, res) => {
+  let finalDiscs = [];
+  const discs = await Disscusion.find({}).sort('-createdAt');
+  for (let k = 0; k < 5; k++) {
+    if (k >= discs.length) break;
+    finalDiscs.push(discs[k]);
+  }
+  return res.status(200).send({ discs: finalDiscs });
+});
+
 module.exports = router;

@@ -157,6 +157,17 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
   res.send(result);
 });
 
+router.post('/edituser', authenticate, async (req, res) => {
+  const user = await User.updateOne(
+    { _id: req.body.userId },
+    { $set: req.body }
+  );
+  if (!user) {
+    res.sendStatus(404);
+  }
+  res.sendStatus(200);
+});
+
 router.post('/login', async (req, res) => {
   email = req.body.email;
   password = req.body.password;
