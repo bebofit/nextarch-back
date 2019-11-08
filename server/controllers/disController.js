@@ -276,7 +276,15 @@ router.post('/trending', async (req, res) => {
   }
   for (let k = 0; k < 5; k++) {
     if (k >= discs.length) break;
-    finalDiscs.push(discs[k]);
+    const filteredDisc = _.pick(discs[k], [
+      '_id',
+      'desc',
+      'title',
+      'category',
+      'createdAt',
+      'imageurl'
+    ]);
+    finalDiscs.push(filteredDisc);
   }
   return res.status(200).send({ discs: finalDiscs });
 });
@@ -286,7 +294,15 @@ router.post('/latest', async (req, res) => {
   const discs = await Disscusion.find({}).sort('-createdAt');
   for (let k = 0; k < 5; k++) {
     if (k >= discs.length) break;
-    finalDiscs.push(discs[k]);
+    const filteredDisc = _.pick(discs[k], [
+      '_id',
+      'desc',
+      'title',
+      'category',
+      'createdAt',
+      'imageurl'
+    ]);
+    finalDiscs.push(filteredDisc);
   }
   return res.status(200).send({ discs: finalDiscs });
 });
