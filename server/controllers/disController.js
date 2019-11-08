@@ -262,7 +262,7 @@ router.post('/updateimage', authenticate, async (req, res) => {
   }
 });
 
-router.post('/trending', authenticate, async (req, res) => {
+router.post('/trending', async (req, res) => {
   let finalDiscs = [];
   const discs = await Disscusion.find({});
   for (let i = 0; i < discs.length; i++) {
@@ -281,7 +281,7 @@ router.post('/trending', authenticate, async (req, res) => {
   return res.status(200).send({ discs: finalDiscs });
 });
 
-router.post('/latest', authenticate, async (req, res) => {
+router.post('/latest', async (req, res) => {
   let finalDiscs = [];
   const discs = await Disscusion.find({}).sort('-createdAt');
   for (let k = 0; k < 5; k++) {

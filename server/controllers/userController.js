@@ -441,13 +441,13 @@ router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
   }
 });
 
-router.post('/forgotPassword', authenticate, async (req, res) => {
-  userID = req.body.userid;
+router.post('/forgotPassword', async (req, res) => {
+  userId = req.body.userid;
   newPassword = req.body.password;
 
   let user;
   user = await Account.findOne({
-    _id: userID
+    _id: userId
   }).exec();
   if (!user) {
     return res.status(400).send({
