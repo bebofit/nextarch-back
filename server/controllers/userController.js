@@ -387,7 +387,11 @@ router.post('/search', authenticate, async (req, res) => {
     let finalUsers = [];
     const search = req.body.search;
     const discussions = await Disscusion.find({
-      $or:[{keywords: new RegExp(search)}, {title: new RegExp(search)}, {desc: new RegExp(search)}]
+      $or: [
+        { keywords: new RegExp(search) },
+        { title: new RegExp(search) },
+        { desc: new RegExp(search) }
+      ]
     });
     const users = await User.find({
       $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
@@ -442,46 +446,55 @@ router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
 });
 
 router.post('/forgotPassword', async (req, res) => {
-  userId = req.body.userid;
-  newPassword = req.body.password;
+  try {
+    const user = await User.findById({ _id: req.body.email });
+    if (!user) {
+      return res.status(401).send("user doesn't exist");
+    }
+    newPassword = req.body.password;
 
-  let user;
-  user = await Account.findOne({
-    _id: userId
-  }).exec();
-  if (!user) {
-    return res.status(400).send({
-      msg: 'Invalid credentials'
+    let user;
+    user = await Account.findOne({
+      _id: userId
+    }).exec();
+    if (!user) {
+      return res.status(400).send({
+        msg: 'Invalid credentials'
+      });
+    }
+    var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
+
+    user.password = ciphertext;
+    const resu = await user.save();
+    let result = _.pick(resu, [
+      '_id',
+      'username',
+      'email',
+      'name',
+      'dateofbirth',
+      'gender',
+      'city',
+      'desc',
+      'foi',
+      'bio',
+      'softwares',
+      'company',
+      'portfolio',
+      'website',
+      'createdAt',
+      'favdisc',
+      'following',
+      'followers',
+      'imageurl'
+    ]);
+    return res.status(200).send({
+      ...result._doc
+    });
+  } catch (error) {
+    res.status(400).send({
+      msg: error
     });
   }
-  var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
-
-  user.password = ciphertext;
-  const resu = await user.save();
-  let result = _.pick(resu, [
-    '_id',
-    'username',
-    'email',
-    'name',
-    'dateofbirth',
-    'gender',
-    'city',
-    'desc',
-    'foi',
-    'bio',
-    'softwares',
-    'company',
-    'portfolio',
-    'website',
-    'createdAt',
-    'favdisc',
-    'following',
-    'followers',
-    'imageurl'
-  ]);
-  return res.status(200).send({
-    ...result._doc
-  });
 });
 
 module.exports = router;
