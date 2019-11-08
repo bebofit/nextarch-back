@@ -429,7 +429,7 @@ router.post('/search', authenticate, async (req, res) => {
 
 router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.body.email });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(401).send("user doesn't exist");
     }
@@ -447,23 +447,12 @@ router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
 
 router.post('/forgotPassword', async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.body.email });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(401).send("user doesn't exist");
     }
     newPassword = req.body.password;
-
-    let user;
-    user = await Account.findOne({
-      _id: userId
-    }).exec();
-    if (!user) {
-      return res.status(400).send({
-        msg: 'Invalid credentials'
-      });
-    }
     var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
-
     user.password = ciphertext;
     const resu = await user.save();
     let result = _.pick(resu, [
