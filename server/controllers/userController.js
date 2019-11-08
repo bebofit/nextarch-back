@@ -158,14 +158,16 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
 });
 
 router.post('/edituser', authenticate, async (req, res) => {
+  console.log(req.body);
+
   const user = await User.updateOne(
     { _id: req.body.userId },
     { $set: req.body }
   );
   if (!user) {
-    res.sendStatus(404);
+    res.status(404);
   }
-  res.sendStatus(200);
+  res.status(200).send({ msg: 'done' });
 });
 
 router.post('/login', async (req, res) => {
