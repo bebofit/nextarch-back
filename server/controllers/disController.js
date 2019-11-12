@@ -263,30 +263,22 @@ router.post('/updateimage', authenticate, async (req, res) => {
 });
 
 router.post('/trending', async (req, res) => {
-  let finalDiscs = [];
-  const discs = await Disscusion.find({});
-  for (let i = 0; i < discs.length; i++) {
-    for (let j = 0; j < discs.length - i; i++) {
-      if (discs[j].users.length < discs[j + 1].users.length) {
-        const temp = discs[j];
-        discs[j] = discs[j + 1];
-        discs[j + 1] = temp;
+  let discs = await Disscusion.aggregate([
+    {
+      $project: {
+        _id: 1,
+        desc: 1,
+        title: 1,
+        category: 1,
+        createdAt: 1,
+        imageurl: 1,
+        length: { $size: '$users' }
       }
-    }
-  }
-  for (let k = 0; k < 5; k++) {
-    if (k >= discs.length) break;
-    const filteredDisc = _.pick(discs[k], [
-      '_id',
-      'desc',
-      'title',
-      'category',
-      'createdAt',
-      'imageurl'
-    ]);
-    finalDiscs.push(filteredDisc);
-  }
-  return res.status(200).send({ discs: finalDiscs });
+    },
+    { $sort: { length: -1 } },
+    { $limit: 5 }
+  ]);
+  return res.status(200).send({ discs });
 });
 
 router.post('/latest', async (req, res) => {
