@@ -56,18 +56,19 @@ router.get('/getdiscbyid/:discId', async (req, res) => {
     });
 
     discs[i].status = 0;
-    if (user.favdisc.length != 0) {
-      for (let i = 0; i < user.favdisc.length; i++) {
-        const discidTemp = user.favdisc[i];
-        if (discidTemp == req.body.discid) {
-          console.log(discidTemp);
-          console.log(req.body.discid);
-          discs[i].status = 1;
-          break;
+    if (user) {
+      if (user.favdisc.length != 0) {
+        for (let i = 0; i < user.favdisc.length; i++) {
+          const discidTemp = user.favdisc[i];
+          if (discidTemp == req.body.discid) {
+            console.log(discidTemp);
+            console.log(req.body.discid);
+            discs[i].status = 1;
+            break;
+          }
         }
       }
     }
-
     if (discs[i].comments.length != 0) {
       for (let j = 0; j < discs[i].comments.length; j++) {
         const mainComment = await Comment.findById({
