@@ -49,26 +49,6 @@ router.get('/getdiscbyid/:discId', async (req, res) => {
     let result = _.pick(muser, ['_id', 'name']);
     discs[i].userid[0] = result;
 
-    //To check if starred or not
-
-    const user = await User.findById({
-      _id: req.body.userId
-    });
-
-    discs[i].status = 0;
-    if (user) {
-      if (user.favdisc.length != 0) {
-        for (let i = 0; i < user.favdisc.length; i++) {
-          const discidTemp = user.favdisc[i];
-          if (discidTemp == req.body.discid) {
-            console.log(discidTemp);
-            console.log(req.body.discid);
-            discs[i].status = 1;
-            break;
-          }
-        }
-      }
-    }
     if (discs[i].comments.length != 0) {
       for (let j = 0; j < discs[i].comments.length; j++) {
         const mainComment = await Comment.findById({
@@ -96,6 +76,26 @@ router.get('/getdiscbyid/:discId', async (req, res) => {
           });
           let result = _.pick(el, ['_id', 'name']);
           discs[i].users[k] = result;
+        }
+      }
+    }
+  }
+  res.status(200).send(discs);
+});
+
+router.post('checkDisckStarredByUser', authenticate, async (req, res) => {
+  const user = await User.findById({
+    _id: req.body.userId
+  });
+  const disc = await Disscusion.findById({ _id: req.body.discId });
+  discs.status = 0;
+  if (user) {
+    if (user.favdisc.length != 0) {
+      for (let i = 0; i < user.favdisc.length; i++) {
+        const discidTemp = user.favdisc[i];
+        if (discidTemp == req.body.discId) {
+          discs.status = 1;
+          break;
         }
       }
     }
