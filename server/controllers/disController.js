@@ -36,9 +36,9 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-router.post('/getdiscbyid', authenticate, async (req, res) => {
+router.get('/getdiscbyid', async (req, res) => {
   let discs = await Disscusion.find({
-    _id: req.body.discid
+    _id: req.params.discid
   });
 
   for (let i = 0; i < discs.length; i++) {
