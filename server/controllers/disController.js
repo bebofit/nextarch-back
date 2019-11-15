@@ -37,22 +37,19 @@ router.post('/creatediss', async (req, res) => {
 });
 
 router.get('/getdiscbyid/:discId', async (req, res) => {
-  let discs = await Disscusion.find({
+  let disc= await Disscusion.findOne({
     _id: req.params.discid
   });
-
-  for (let i = 0; i < discs.length; i++) {
     const muser = await User.findById({
-      _id: discs[i].userid[0]
+      _id: disc.userid[0]
     });
 
     let result = _.pick(muser, ['_id', 'name']);
-    discs[i].userid[0] = result;
-
-    if (discs[i].comments.length != 0) {
-      for (let j = 0; j < discs[i].comments.length; j++) {
+    disc.userid[0] = result;
+    if (disc.comments.length != 0) {
+      for (let j = 0; j < disc.comments.length; j++) {
         const mainComment = await Comment.findById({
-          _id: discs[i].comments[j]._id
+          _id: disc.comments[j]._id
         });
         const user = await User.findById({
           _id: mainComment.commentor[0]
@@ -67,19 +64,18 @@ router.get('/getdiscbyid/:discId', async (req, res) => {
         let result = _.pick(user, ['_id', 'name']);
         mainComment.commentor[0] = result;
 
-        discs[i].comments[j] = mainComment;
+        disc.comments[j] = mainComment;
       }
-      if (discs[i].users.length != 0) {
-        for (let k = 0; k < discs[i].users.length; k++) {
+      if (disc.users.length != 0) {
+        for (let k = 0; k < disc.users.length; k++) {
           const el = await User.findById({
-            _id: discs[i].users[k]._id
+            _id: disc.users[k]._id
           });
           let result = _.pick(el, ['_id', 'name']);
-          discs[i].users[k] = result;
+          disc.users[k] = result;
         }
       }
-    }
-  }
+    
   res.status(200).send(discs);
 });
 
