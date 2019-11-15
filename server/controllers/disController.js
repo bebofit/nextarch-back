@@ -36,67 +36,90 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-router.get('/getdiscbyid/:discId', async (req, res) => {
-  let disc= await Disscusion.findOne({
-    _id: req.params.discid
+router.get('/:discId', async (req, res) => {
+  let disc = await Disscusion.findOne({
+    _id: req.params.discId
   });
-    const muser = await User.findById({
-      _id: disc.userid[0]
-    });
 
-    let result = _.pick(muser, ['_id', 'name']);
-    disc.userid[0] = result;
+  const muser = await User.findById({
+    _id: disc.userid[0]
+  });
+  let filteredMainUser = _.pick(muser, ['_id', 'name']);
+  disc.userid[0] = filteredMainUser;
+
+  if (disc.comments.length != 0) {
+    for (let j = 0; j < disc.comments.length; j++) {
+      const mainComment = await Comment.findById({
+        _id: disc.comments[j]._id
+      });
+      const user = await User.findById({
+        _id: mainComment.commentor[0]
+      });
+      let filteredUser = _.pick(user, ['_id', 'name']);
+      mainComment.commentor[0] = filteredUser;
+      disc.comments[j] = mainComment;
+    }
+  }
+
+  if (disc.users.length != 0) {
+    for (let k = 0; k < disc.users.length; k++) {
+      const el = await User.findById({
+        _id: disc.users[k]._id
+      });
+      let result = _.pick(el, ['_id', 'name']);
+      disc.users[k] = result;
+    }
+  }
+  res.status(200).send(disc);
+});
+
+router.post(
+  '/checkLikedCommentsForDiscByUser',
+  authenticate,
+  async (req, res) => {
+    const commentsStatus = [];
+    let flag = false;
+    const disc = await Disscusion.findById({ _id: req.body.discId });
     if (disc.comments.length != 0) {
       for (let j = 0; j < disc.comments.length; j++) {
         const mainComment = await Comment.findById({
           _id: disc.comments[j]._id
         });
-        const user = await User.findById({
-          _id: mainComment.commentor[0]
-        });
         for (let k = 0; k < mainComment.likesarray.length; k++) {
           if (mainComment.likesarray[k] == req.body.userId) {
-            mainComment.status = 1;
+            flag = true;
             break;
           }
-          mainComment.status = 0;
         }
-        let result = _.pick(user, ['_id', 'name']);
-        mainComment.commentor[0] = result;
-
-        disc.comments[j] = mainComment;
-      }
-      if (disc.users.length != 0) {
-        for (let k = 0; k < disc.users.length; k++) {
-          const el = await User.findById({
-            _id: disc.users[k]._id
-          });
-          let result = _.pick(el, ['_id', 'name']);
-          disc.users[k] = result;
+        if (flag) {
+          commentsStatus.push(1);
+        } else {
+          commentsStatus.push(0);
         }
       }
-    
-  res.status(200).send(discs);
-});
+    }
+    res.status(200).send(commentsStatus);
+  }
+);
 
-router.post('checkDisckStarredByUser', authenticate, async (req, res) => {
+router.post('/checkDisckStarredByUser', authenticate, async (req, res) => {
+  let discStatus = 0;
   const user = await User.findById({
     _id: req.body.userId
   });
   const disc = await Disscusion.findById({ _id: req.body.discId });
-  discs.status = 0;
   if (user) {
     if (user.favdisc.length != 0) {
       for (let i = 0; i < user.favdisc.length; i++) {
         const discidTemp = user.favdisc[i];
         if (discidTemp == req.body.discId) {
-          discs.status = 1;
+          discStatus = 1;
           break;
         }
       }
     }
   }
-  res.status(200).send(discs);
+  res.status(200).send({ status: discStatus });
 });
 
 router.post('/getmydiscs', authenticate, async (req, res) => {
@@ -251,8 +274,6 @@ router.post('/updateimage', authenticate, async (req, res) => {
     );
     res.sendStatus(200);
   } catch (error) {
-    console.log(error);
-
     res.status(400).send({
       msg: error
     });
