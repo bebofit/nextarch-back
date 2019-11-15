@@ -36,7 +36,7 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-router.get('/getdiscbyid', async (req, res) => {
+router.get('/getdiscbyid/:discId', async (req, res) => {
   let discs = await Disscusion.find({
     _id: req.params.discid
   });
