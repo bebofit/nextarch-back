@@ -429,7 +429,7 @@ router.post('/search', authenticate, async (req, res) => {
   }
 });
 
-router.post('/checkSecurityQuestion', authenticate, async (req, res) => {
+router.post('/checkSecurityQuestion', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
