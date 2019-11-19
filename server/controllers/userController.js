@@ -63,10 +63,11 @@ router.post('/signup', (req, res) => {
       return user.generateAuthToken();
     })
     .then(token => {
-      delete user.password;
-      delete user.tokens;
-      delete user.securityQuestion;
-      delete user.securityQuestionAnswer;
+      const userObject = user.toJSON();
+      delete userObject.password;
+      delete userObject.tokens;
+      delete userObject.securityQuestion;
+      delete userObject.securityQuestionAnswer;
       res.send({
         user,
         token: token
@@ -78,7 +79,7 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/getuser', authenticate, async (req, res) => {
-  const user = await User.findOne({ _id: req.body.id }).select(
+  var user = await User.findOne({ _id: req.body.id }).select(
     '-password -tokens -securityQuestion -securityQuestionAnswer'
   );
   res.send(user);
@@ -86,18 +87,20 @@ router.post('/getuser', authenticate, async (req, res) => {
 
 router.post('/getOtherUser', authenticate, async (req, res) => {
   let user = await User.findOne({ _id: req.body.userId });
-  let otherUser = await User.findOne({ _id: req.body.otherUserId });
+  const otherUser = await User.findOne({ _id: req.body.otherUserId });
   for (let i = 0; i < user.following.length; i++) {
     if (user.following[i] == req.body.otherUserId) {
       otherUser.status = 1;
       break;
     }
   }
-  delete otherUser.password;
-  delete otherUser.tokens;
-  delete otherUser.securityQuestion;
-  delete otherUser.securityQuestionAnswer;
-  res.send(otherUser);
+  const otherUserObject = otherUser.toJSON();
+
+  delete otherUserObject.password;
+  delete otherUserObject.tokens;
+  delete otherUserObject.securityQuestion;
+  delete otherUserObject.securityQuestionAnswer;
+  res.send({ otherUser: otherUserObject });
 });
 
 router.post('/edituser', authenticate, async (req, res) => {
@@ -116,7 +119,7 @@ router.post('/edituser', authenticate, async (req, res) => {
 router.post('/login', async (req, res) => {
   email = req.body.email;
   password = req.body.password;
-  const user = await User.findOne({ email: email });
+  var user = await User.findOne({ email: email });
   if (!user) {
     return res.status(400).send({ msg: 'No user exsist!' });
   }
@@ -130,13 +133,14 @@ router.post('/login', async (req, res) => {
     return res.status(400).send({ msg: 'Invalid Password' });
   } else {
     const token = await user.generateAuthToken();
-    delete user.password;
-    delete user.tokens;
-    delete user.securityQuestion;
-    delete user.securityQuestionAnswer;
+    const userObject = user.toJSON();
+    delete userObject.password;
+    delete userObject.tokens;
+    delete userObject.securityQuestion;
+    delete userObject.securityQuestionAnswer;
 
     return res.send({
-      user,
+      user: userObject,
       token: token
     });
   }
@@ -170,8 +174,7 @@ router.post('/changePassword', authenticate, async (req, res) => {
   old = req.body.old;
   newPassword = req.body.newPassword;
 
-  let user;
-  user = await Account.findOne({
+  var user = await Account.findOne({
     _id: userID
   }).exec();
   if (!user) {
@@ -194,13 +197,14 @@ router.post('/changePassword', authenticate, async (req, res) => {
   var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
 
   user.password = ciphertext;
-  const newUser = await user.save();
-  delete newUser.password;
-  delete newUser.tokens;
-  delete newUser.securityQuestion;
-  delete newUser.securityQuestionAnswer;
+  var newUser = await user.save();
+  const userObject = newUser.toJSON();
+  delete userObject.password;
+  delete userObject.tokens;
+  delete userObject.securityQuestion;
+  delete userObject.securityQuestionAnswer;
   return res.status(200).send({
-    ...newUser._doc
+    user: userObject
   });
 });
 
