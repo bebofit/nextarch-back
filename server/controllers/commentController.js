@@ -49,33 +49,6 @@ router.post('/createcomment', authenticate, async (req, res) => {
   }
 });
 
-router.post('/createsubcomment', authenticate, async (req, res) => {
-  try {
-    let comment = await new Comment({
-      imageurl: req.body.imageurl,
-      commentor: req.body.userid,
-      desc: req.body.desc
-    }).save();
-
-    let maincomment = await Comment.findByIdAndUpdate(
-      {
-        _id: req.body.mainid
-      },
-      {
-        $push: {
-          following: comment._id
-        }
-      }
-    );
-
-    res.status(200).send({
-      msg: 'created subcomment'
-    });
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
 router.post('/likecomment', authenticate, async (req, res) => {
   try {
     let maincomment = await Comment.findByIdAndUpdate(

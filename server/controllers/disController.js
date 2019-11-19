@@ -1,6 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 const _ = require('lodash');
+const { authenticate } = require('../middleware/authenticate');
+const { User } = require('../models/User');
+const { Disscusion } = require('../models/disscusion');
+const { Comment } = require('../models/comment');
 
 var router = express.Router();
 router.use(
@@ -9,12 +13,6 @@ router.use(
   })
 );
 router.use(bodyParser.json());
-//midddleware
-const { authenticate } = require('../middleware/authenticate');
-//models
-const { User } = require('../models/User');
-const { Disscusion } = require('../models/disscusion');
-const { Comment } = require('../models/comment');
 
 router.post('/creatediss', async (req, res) => {
   try {
@@ -138,15 +136,6 @@ router.post('/getmydiscs', authenticate, async (req, res) => {
         });
         let result = _.pick(user, ['_id', 'name']);
         element.commentor[0] = result;
-        // if(element.subcomments.length != 0)
-        // {
-        //     for (let k = 0; k < element.subcomments.length; k++) {
-        //         const el = await Comment.findById({_id: element.subcomments[k]._id});
-        //         element.subcomments[k] = el
-        //     }
-
-        // }
-
         discs[i].comments[j] = element;
       }
       if (discs[i].users.length != 0) {

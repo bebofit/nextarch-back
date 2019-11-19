@@ -57,35 +57,18 @@ router.post('/signup', (req, res) => {
     password: ciphertext,
     createdAt
   });
-  let result = _.pick(user, [
-    '_id',
-    'username',
-    'email',
-    'name',
-    'dateofbirth',
-    'gender',
-    'city',
-    'desc',
-    'foi',
-    'bio',
-    'softwares',
-    'company',
-    'portfolio',
-    'website',
-    'createdAt',
-    'favdisc',
-    'following',
-    'followers',
-    'imageurl'
-  ]);
   user
     .save()
     .then(() => {
       return user.generateAuthToken();
     })
     .then(token => {
+      delete user.password;
+      delete user.tokens;
+      delete user.securityQuestion;
+      delete user.securityQuestionAnswer;
       res.send({
-        user: result,
+        user,
         token: token
       });
     })
@@ -95,31 +78,10 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/getuser', authenticate, async (req, res) => {
-  let user2 = await User.findOne({ _id: req.body.id });
-
-  let result = _.pick(user2, [
-    '_id',
-    'username',
-    'email',
-    'name',
-    'dateofbirth',
-    'gender',
-    'city',
-    'desc',
-    'foi',
-    'bio',
-    'softwares',
-    'company',
-    'portfolio',
-    'website',
-    'createdAt',
-    'favdisc',
-    'following',
-    'followers',
-    'imageurl'
-  ]);
-
-  res.send(result);
+  const user = await User.findOne({ _id: req.body.id }).select(
+    '-password -tokens -securityQuestion -securityQuestionAnswer'
+  );
+  res.send(user);
 });
 
 router.post('/getOtherUser', authenticate, async (req, res) => {
@@ -131,30 +93,11 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
       break;
     }
   }
-  let result = _.pick(otherUser, [
-    '_id',
-    'username',
-    'email',
-    'name',
-    'dateofbirth',
-    'gender',
-    'city',
-    'desc',
-    'foi',
-    'bio',
-    'softwares',
-    'company',
-    'portfolio',
-    'website',
-    'createdAt',
-    'favdisc',
-    'status',
-    'following',
-    'followers',
-    'imageurl'
-  ]);
-
-  res.send(result);
+  delete otherUser.password;
+  delete otherUser.tokens;
+  delete otherUser.securityQuestion;
+  delete otherUser.securityQuestionAnswer;
+  res.send(otherUser);
 });
 
 router.post('/edituser', authenticate, async (req, res) => {
@@ -187,30 +130,13 @@ router.post('/login', async (req, res) => {
     return res.status(400).send({ msg: 'Invalid Password' });
   } else {
     const token = await user.generateAuthToken();
-    let result = _.pick(user, [
-      '_id',
-      'username',
-      'email',
-      'name',
-      'dateofbirth',
-      'gender',
-      'city',
-      'desc',
-      'foi',
-      'bio',
-      'softwares',
-      'company',
-      'portfolio',
-      'website',
-      'createdAt',
-      'favdisc',
-      'following',
-      'followers',
-      'imageurl'
-    ]);
+    delete user.password;
+    delete user.tokens;
+    delete user.securityQuestion;
+    delete user.securityQuestionAnswer;
 
     return res.send({
-      user: result,
+      user,
       token: token
     });
   }
@@ -268,30 +194,13 @@ router.post('/changePassword', authenticate, async (req, res) => {
   var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
 
   user.password = ciphertext;
-  const resu = await user.save();
-  let result = _.pick(resu, [
-    '_id',
-    'username',
-    'email',
-    'name',
-    'dateofbirth',
-    'gender',
-    'city',
-    'desc',
-    'foi',
-    'bio',
-    'softwares',
-    'company',
-    'portfolio',
-    'website',
-    'createdAt',
-    'favdisc',
-    'following',
-    'followers',
-    'imageurl'
-  ]);
+  const newUser = await user.save();
+  delete newUser.password;
+  delete newUser.tokens;
+  delete newUser.securityQuestion;
+  delete newUser.securityQuestionAnswer;
   return res.status(200).send({
-    ...result._doc
+    ...newUser._doc
   });
 });
 
@@ -397,31 +306,8 @@ router.post('/search', authenticate, async (req, res) => {
     });
     const users = await User.find({
       $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
-    });
-    for (let i = 0; i < users.length; i++) {
-      let filteredUser = _.pick(users[i], [
-        '_id',
-        'username',
-        'email',
-        'name',
-        'dateofbirth',
-        'gender',
-        'city',
-        'desc',
-        'foi',
-        'bio',
-        'softwares',
-        'company',
-        'portfolio',
-        'website',
-        'createdAt',
-        'favdisc',
-        'following',
-        'followers'
-      ]);
-      finalUsers.push(filteredUser);
-    }
-    res.status(200).send({ discussions, finalUsers });
+    }).select('-password -tokens -securityQuestion -securityQuestionAnswer');
+    res.status(200).send({ discussions, users });
   } catch (error) {
     res.status(400).send({
       msg: 'error ya sisa'
@@ -429,11 +315,23 @@ router.post('/search', authenticate, async (req, res) => {
   }
 });
 
+router.post('/checkEmail', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).send("user doesn't exist");
+    }
+    res.status(200).send({ securityQuestion: user.securityQuestion });
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+});
+
 router.post('/checkSecurityQuestion', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(401).send("user doesn't exist");
+      return res.status(404).send("user doesn't exist");
     }
     if (user.securityQuestionAnswer === req.body.securityQuestionAnswer) {
       res.status(200).send({ data: true });
@@ -447,39 +345,18 @@ router.post('/checkSecurityQuestion', async (req, res) => {
   }
 });
 
-router.post('/forgotPassword', async (req, res) => {
+router.post('/changeForgotPassword', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(401).send("user doesn't exist");
+      return res.status(404).send("user doesn't exist");
     }
-    newPassword = req.body.password;
+    newPassword = req.body.newPassword;
     var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
     user.password = ciphertext;
-    const resu = await user.save();
-    let result = _.pick(resu, [
-      '_id',
-      'username',
-      'email',
-      'name',
-      'dateofbirth',
-      'gender',
-      'city',
-      'desc',
-      'foi',
-      'bio',
-      'softwares',
-      'company',
-      'portfolio',
-      'website',
-      'createdAt',
-      'favdisc',
-      'following',
-      'followers',
-      'imageurl'
-    ]);
+    await user.save();
     return res.status(200).send({
-      ...result._doc
+      status: true
     });
   } catch (error) {
     res.status(400).send({
