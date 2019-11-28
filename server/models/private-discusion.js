@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
 
-var DisscusionSchema = new Schema(
+var PrivateDisscusionSchema = new Schema(
   {
     title: {
       type: String
@@ -19,8 +19,7 @@ var DisscusionSchema = new Schema(
         type: String
       }
     ],
-    privateDisc: { type: Schema.Types.ObjectId, default: null },
-
+    Disc: Schema.Types.ObjectId,
     comments: [
       {
         type: Schema.Types.ObjectId
@@ -53,5 +52,8 @@ var DisscusionSchema = new Schema(
   { timestamps: true }
 );
 
-var Disscusion = mongoose.model('Disscusion', DisscusionSchema);
-module.exports = { Disscusion };
+var PrivateDisscusion = mongoose.model(
+  'PrivateDisscusion',
+  PrivateDisscusionSchema
+);
+module.exports = { PrivateDisscusion };

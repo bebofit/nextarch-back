@@ -18,17 +18,23 @@ app.use(cors());
 // });
 app.use(bodyParser.json());
 
+var adminCrudsController = require('./controllers/adminCruds');
+var authAdminController = require('./controllers/authAdminController');
+var authUserController = require('./controllers/authUserController');
 var userController = require('./controllers/userController');
 var disController = require('./controllers/disController');
 var commentController = require('./controllers/commentController');
 
+app.use('/adminCruds', adminCrudsController);
+app.use('/authAdmins', authAdminController);
+app.use('/authUsers', authUserController);
 app.use('/users', userController);
 app.use('/disc', disController);
 app.use('/comment', commentController);
 
 mongoose
   .connect(
-    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch?retryWrites=true`,
+    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch-dev?retryWrites=true`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .catch(err => {
