@@ -72,7 +72,7 @@ router.patch('/updateAdmin', adminMiddleware, async (req, res) => {
           username: req.body.username,
           name: req.body.name
         }
-       },
+      },
       { new: true }
     );
     const adminObject = admin.toJSON();
@@ -101,7 +101,9 @@ router.delete('/deleteAdmin/:adminId', adminMiddleware, async (req, res) => {
 
 router.get('/getAllUsers', adminMiddleware, async (req, res) => {
   try {
-    const users = await User.find({}).select('-password -tokens -securityQuestionAnswer');
+    const users = await User.find({}).select(
+      '-password -tokens -securityQuestionAnswer'
+    );
     res.send({ users }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -110,7 +112,9 @@ router.get('/getAllUsers', adminMiddleware, async (req, res) => {
 
 router.get('/getUserById/:userId', adminMiddleware, async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.params.userId }).select('-password -tokens -securityQuestionAnswer')
+    const user = await User.findById({ _id: req.params.userId }).select(
+      '-password -tokens -securityQuestionAnswer'
+    );
     res.send({ user }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -160,20 +164,20 @@ router.patch('/updateUser', adminMiddleware, async (req, res) => {
       { _id: req.body.userId },
       {
         $set: {
-    email: req.body.email,
-    username: req.body.username,
-    name: req.body.name,
-    dateofbirth: req.body.dateofbirth,
-    gender: req.body.gender,
-    city: req.body.city,
-    desc: req.body.desc,
-    foi: req.body.foi,
-    bio: req.body.bio,
-    softwares: req.body.softwares,
-    company: req.body.company,
-    portfolio: req.body.portfolio,
-    website: req.body.website,
-    securityQuestion: req.body.securityQuestion
+          email: req.body.email,
+          username: req.body.username,
+          name: req.body.name,
+          dateofbirth: req.body.dateofbirth,
+          gender: req.body.gender,
+          city: req.body.city,
+          desc: req.body.desc,
+          foi: req.body.foi,
+          bio: req.body.bio,
+          softwares: req.body.softwares,
+          company: req.body.company,
+          portfolio: req.body.portfolio,
+          website: req.body.website,
+          securityQuestion: req.body.securityQuestion
         }
       },
       { new: true }
@@ -374,7 +378,7 @@ router.get('/getCommentById/:commentId', adminMiddleware, async (req, res) => {
   try {
     const comment = await Comment.findById({
       _id: req.params.commentId
-    };
+    });
     res.send({ comment }).status(200);
   } catch (error) {
     res.status(500).send(error);
