@@ -1,6 +1,8 @@
 const { Admin } = require('../models/Admin');
+const { User } = require('../models/User');
 const { Disscusion } = require('../models/disscusion');
-
+const { PrivateDisscusion } = require('../models/private-discusion');
+const { Comment } = require('../models/comment');
 const { adminMiddleware } = require('../middleware/admin-middleware');
 var CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
@@ -62,18 +64,15 @@ router.post('/createAdmin', adminMiddleware, async (req, res) => {
 
 router.patch('/updateAdmin', adminMiddleware, async (req, res) => {
   try {
-    var ciphertext = CryptoJS.AES.encrypt(
-      req.body.password,
-      'cabonourhanysisa1997'
-    );
     const admin = await Admin.findByIdAndUpdate(
       { _id: req.body.adminId },
       {
-        email: req.body.email,
-        username: req.body.username,
-        name: req.body.name,
-        password: ciphertext
-      },
+        $set: {
+          email: req.body.email,
+          username: req.body.username,
+          name: req.body.name
+        }
+       },
       { new: true }
     );
     const adminObject = admin.toJSON();
@@ -98,10 +97,112 @@ router.delete('/deleteAdmin/:adminId', adminMiddleware, async (req, res) => {
   }
 });
 
+//BAAAA Users
+
+router.get('/getAllUsers', adminMiddleware, async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password -tokens -securityQuestionAnswer');
+    res.send({ users }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get('/getUserById/:userId', adminMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.params.userId }).select('-password -tokens -securityQuestionAnswer')
+    res.send({ user }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.post('/createUser', adminMiddleware, async (req, res) => {
+  try {
+    var ciphertext = CryptoJS.AES.encrypt(
+      req.body.password,
+      'cabonourhanysisa1997'
+    );
+    const createdAt = new Date();
+    const user = await User.create({
+      email: req.body.email,
+      username: req.body.username,
+      name: req.body.name,
+      dateofbirth: req.body.dateofbirth,
+      gender: req.body.gender,
+      city: req.body.city,
+      desc: req.body.desc,
+      foi: req.body.foi,
+      bio: req.body.bio,
+      softwares: req.body.softwares,
+      company: req.body.company,
+      portfolio: req.body.portfolio,
+      website: req.body.website,
+      securityQuestion: req.body.securityQuestion,
+      securityQuestionAnswer: req.body.securityQuestionAnswer,
+      password: ciphertext,
+      createdAt
+    });
+
+    const token = jwt.sign({}, 'nourhany');
+    res.send({
+      user,
+      token
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.patch('/updateUser', adminMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: req.body.userId },
+      {
+        $set: {
+    email: req.body.email,
+    username: req.body.username,
+    name: req.body.name,
+    dateofbirth: req.body.dateofbirth,
+    gender: req.body.gender,
+    city: req.body.city,
+    desc: req.body.desc,
+    foi: req.body.foi,
+    bio: req.body.bio,
+    softwares: req.body.softwares,
+    company: req.body.company,
+    portfolio: req.body.portfolio,
+    website: req.body.website,
+    securityQuestion: req.body.securityQuestion
+        }
+      },
+      { new: true }
+    );
+
+    res.send({
+      user
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.delete('/deleteUser/:userId', adminMiddleware, async (req, res) => {
+  try {
+    if (req.body.adminPass != 'DeletingAndIamSure2019') {
+      return res.sendStatus(403);
+    }
+    await User.deleteOne({ _id: req.params.userId });
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 //BAAAA Disscusions
 router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
   try {
-    const discs = await Disscusion.find({}).select('-password');
+    const discs = await Disscusion.find({});
     res.send({ discs }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -110,9 +211,7 @@ router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
 
 router.get('/getDiscById/:discId', adminMiddleware, async (req, res) => {
   try {
-    const disc = await Disscusion.findById({ _id: req.params.discId }).select(
-      '-password'
-    );
+    const disc = await Disscusion.findById({ _id: req.params.discId });
     res.send({ disc }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -134,12 +233,8 @@ router.post('/createDisc', adminMiddleware, async (req, res) => {
       userid: req.body.userid,
       users: [req.body.userid]
     });
-    const adminObject = admin.toJSON();
-    delete adminObject.password;
-    const token = jwt.sign({ isAdmin: true, discId: admin._id }, 'nourhany');
     res.send({
-      admin: adminObject,
-      token
+      disc
     });
   } catch (error) {
     res.status(500).send(error);
@@ -180,5 +275,162 @@ router.delete('/deleteDisc/:discId', adminMiddleware, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+//BAAAA Private Disscusions
+router.get('/getAllPrivateDiscs', adminMiddleware, async (req, res) => {
+  try {
+    const discs = await PrivateDisscusion.find({});
+    res.send({ discs }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get('/getPrivateDiscById/:discId', adminMiddleware, async (req, res) => {
+  try {
+    const disc = await PrivateDisscusion.findById({
+      _id: req.params.discId
+    });
+    res.send({ disc }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.post('/createPrivateDisc', adminMiddleware, async (req, res) => {
+  try {
+    var ciphertext = CryptoJS.AES.encrypt(
+      req.body.password,
+      'cabonourhanysisa1997'
+    );
+    const disc = await PrivateDisscusion.create({
+      title: req.body.title,
+      desc: req.body.desc,
+      category: req.body.category,
+      keywords: req.body.keywords,
+      imageurl: req.body.imageurl,
+      Disc: req.body.disc,
+      userid: req.body.userid,
+      users: [req.body.userid]
+    });
+    res.send({
+      disc
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.patch('/updatePrivateDisc', adminMiddleware, async (req, res) => {
+  try {
+    const disc = await PrivateDisscusion.findByIdAndUpdate(
+      { _id: req.body.discId },
+      {
+        title: req.body.title,
+        desc: req.body.desc,
+        category: req.body.category,
+        keywords: req.body.keywords,
+        imageurl: req.body.imageurl,
+        userid: req.body.userid,
+        users: [req.body.userid]
+      },
+      { new: true }
+    );
+    res.send({
+      disc
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.delete(
+  '/deletePrivateDisc/:discId',
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      if (req.body.adminPass != 'DeletingAndIamSure2019') {
+        return res.sendStatus(403);
+      }
+      await PrivateDisscusion.deleteOne({ _id: req.params.discId });
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);
+
+//BAAAA Comments
+router.get('/getAllComments', adminMiddleware, async (req, res) => {
+  try {
+    const comments = await Comment.find({});
+    res.send({ comments }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get('/getCommentById/:commentId', adminMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.findById({
+      _id: req.params.commentId
+    };
+    res.send({ comment }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.post('/createComment', adminMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.create({
+      imageurl: req.body.imageurl,
+      commentor: [req.body.commentor],
+      desc: req.body.desc,
+      createdat
+    });
+    res.send({
+      comment
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.patch('/updateComment', adminMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.findByIdAndUpdate(
+      { _id: req.body.commentId },
+      {
+        imageurl: req.body.imageurl,
+        commentor: [req.body.commentor],
+        desc: req.body.desc,
+        createdat
+      },
+      { new: true }
+    );
+    res.send({
+      comment
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.delete(
+  '/deleteComment/:commentId',
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      if (req.body.adminPass != 'DeletingAndIamSure2019') {
+        return res.sendStatus(403);
+      }
+      await Comment.deleteOne({ _id: req.params.commentId });
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);
 
 module.exports = router;
