@@ -101,9 +101,12 @@ router.delete('/deleteAdmin/:adminId', adminMiddleware, async (req, res) => {
 
 router.get('/getAllUsers', adminMiddleware, async (req, res) => {
   try {
-    const users = await User.find({}).select(
-      '-password -tokens -securityQuestionAnswer'
-    );
+    const users = await User.find({})
+      .select('-password -tokens -securityQuestionAnswer')
+      .populate('favdisc')
+      .populate('favproj')
+      .populate('followers', 'name')
+      .populate('following', 'name');
     res.send({ users }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -112,9 +115,12 @@ router.get('/getAllUsers', adminMiddleware, async (req, res) => {
 
 router.get('/getUserById/:userId', adminMiddleware, async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.params.userId }).select(
-      '-password -tokens -securityQuestionAnswer'
-    );
+    const user = await User.findById({ _id: req.params.userId })
+      .select('-password -tokens -securityQuestionAnswer')
+      .populate('favdisc')
+      .populate('favproj')
+      .populate('followers', 'name')
+      .populate('following', 'name');
     res.send({ user }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -206,7 +212,14 @@ router.delete('/deleteUser/:userId', adminMiddleware, async (req, res) => {
 //BAAAA Disscusions
 router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
   try {
-    const discs = await Disscusion.find({});
+    const discs = await Disscusion.find({})
+      .populate({
+        path: 'comments',
+        select: 'imageurl commentor',
+        populate: { path: 'commentor', select: 'name' }
+      })
+      .populate('userid', 'name')
+      .populate('users', 'name');
     res.send({ discs }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -215,7 +228,14 @@ router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
 
 router.get('/getDiscById/:discId', adminMiddleware, async (req, res) => {
   try {
-    const disc = await Disscusion.findById({ _id: req.params.discId });
+    const disc = await Disscusion.findById({ _id: req.params.discId })
+      .populate({
+        path: 'comments',
+        select: 'imageurl commentor',
+        populate: { path: 'commentor', select: 'name' }
+      })
+      .populate('userid', 'name')
+      .populate('users', 'name');
     res.send({ disc }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -283,7 +303,14 @@ router.delete('/deleteDisc/:discId', adminMiddleware, async (req, res) => {
 //BAAAA Private Disscusions
 router.get('/getAllPrivateDiscs', adminMiddleware, async (req, res) => {
   try {
-    const discs = await PrivateDisscusion.find({});
+    const discs = await PrivateDisscusion.find({})
+      .populate({
+        path: 'comments',
+        select: 'imageurl commentor',
+        populate: { path: 'commentor', select: 'name' }
+      })
+      .populate('userid', 'name')
+      .populate('users', 'name');
     res.send({ discs }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -294,7 +321,14 @@ router.get('/getPrivateDiscById/:discId', adminMiddleware, async (req, res) => {
   try {
     const disc = await PrivateDisscusion.findById({
       _id: req.params.discId
-    });
+    })
+      .populate({
+        path: 'comments',
+        select: 'imageurl commentor',
+        populate: { path: 'commentor', select: 'name' }
+      })
+      .populate('userid', 'name')
+      .populate('users', 'name');
     res.send({ disc }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -367,7 +401,9 @@ router.delete(
 //BAAAA Comments
 router.get('/getAllComments', adminMiddleware, async (req, res) => {
   try {
-    const comments = await Comment.find({});
+    const comments = await Comment.find({})
+      .populate('commentor', 'name')
+      .populate('likesarray', 'name');
     res.send({ comments }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -378,7 +414,9 @@ router.get('/getCommentById/:commentId', adminMiddleware, async (req, res) => {
   try {
     const comment = await Comment.findById({
       _id: req.params.commentId
-    });
+    })
+      .populate('commentor', 'name')
+      .populate('likesarray', 'name');
     res.send({ comment }).status(200);
   } catch (error) {
     res.status(500).send(error);
@@ -387,6 +425,7 @@ router.get('/getCommentById/:commentId', adminMiddleware, async (req, res) => {
 
 router.post('/createComment', adminMiddleware, async (req, res) => {
   try {
+    let createdat = new Date();
     const comment = await Comment.create({
       imageurl: req.body.imageurl,
       commentor: [req.body.commentor],

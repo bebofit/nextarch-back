@@ -19,24 +19,32 @@ var DisscusionSchema = new Schema(
         type: String
       }
     ],
-    privateDisc: { type: Schema.Types.ObjectId, default: null },
+    privateDisc: {
+      type: Schema.Types.ObjectId,
+      ref: 'PrivateDisscusion',
+      default: null
+    },
 
     comments: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
       }
     ],
     userid: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     lastpost: {
-      type: Schema.Types.ObjectId
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     },
     users: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     imageurl: {

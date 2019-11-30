@@ -53,23 +53,27 @@ var UserSchema = new Schema(
     createdat: String,
     favdisc: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Disscusion'
       }
     ],
 
     favproj: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Disscusion'
       }
     ],
     followers: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     following: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     tokens: [

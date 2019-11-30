@@ -22,20 +22,24 @@ var PrivateDisscusionSchema = new Schema(
     Disc: Schema.Types.ObjectId,
     comments: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
       }
     ],
     userid: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     lastpost: {
-      type: Schema.Types.ObjectId
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     },
     users: [
       {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     imageurl: {
