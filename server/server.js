@@ -18,6 +18,7 @@ app.use(cors());
 // });
 app.use(bodyParser.json());
 
+var thinktankController = require('./controllers/thinkTankController');
 var adminCrudsController = require('./controllers/adminCruds');
 var authAdminController = require('./controllers/authAdminController');
 var authUserController = require('./controllers/authUserController');
@@ -25,6 +26,7 @@ var userController = require('./controllers/userController');
 var disController = require('./controllers/disController');
 var commentController = require('./controllers/commentController');
 
+app.use('/thinktank', thinktankController);
 app.use('/adminCruds', adminCrudsController);
 app.use('/authAdmins', authAdminController);
 app.use('/authUsers', authUserController);
