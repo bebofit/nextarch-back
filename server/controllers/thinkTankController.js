@@ -3,6 +3,7 @@ const { Disscusion } = require('../models/disscusion');
 const { PrivateDisscusion } = require('../models/private-discusion');
 const { adminMiddleware } = require('../middleware/admin-middleware');
 const { authenticate } = require('../middleware/authenticate');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 const _ = require('lodash');
@@ -15,7 +16,7 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.post('/createForm', async (req, res) => {
+router.post('/createForm', authenticate, async (req, res) => {
   try {
     const form = await Form.create({
       title: req.body.title,
@@ -31,7 +32,7 @@ router.post('/createForm', async (req, res) => {
   }
 });
 
-router.post('rejectForm', async (req, res) => {
+router.post('rejectForm', adminMiddleware, async (req, res) => {
   try {
     await Form.findByIdAndDelete({ _id: req.body.formId });
     res.sendStatus(202);
@@ -40,7 +41,7 @@ router.post('rejectForm', async (req, res) => {
   }
 });
 
-router.post('/accecptForm', async (req, res) => {
+router.post('/accecptForm', adminMiddleware, async (req, res) => {
   try {
     const discId = req.body.descId;
     const formId = req.body.formId;

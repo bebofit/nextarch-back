@@ -3,6 +3,7 @@ const { User } = require('../models/User');
 const { Disscusion } = require('../models/disscusion');
 const { PrivateDisscusion } = require('../models/private-discusion');
 const { Comment } = require('../models/comment');
+const { Form } = require('../models/Form');
 const { adminMiddleware } = require('../middleware/admin-middleware');
 var CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
@@ -475,5 +476,26 @@ router.delete(
     }
   }
 );
+
+//BAAAA FORMS
+router.get('/getAllForms', adminMiddleware, async (req, res) => {
+  try {
+    const forms = await Form.find({}).populate('stakeholders', 'name');
+    res.send({ forms }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get('/getFormById/:formId', adminMiddleware, async (req, res) => {
+  try {
+    const form = await Form.findById({
+      _id: req.params.formId
+    }).populate('stakeholders', 'name');
+    res.send({ form }).status(200);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 module.exports = router;
