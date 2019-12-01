@@ -27,7 +27,8 @@ var formSchema = new Schema(
     constitution: {
       type: String,
       required: true
-    }
+    },
+    discId: { type: Schema.Types.ObjectId, ref: 'Disscusion', required: true }
   },
   { timestamps: true }
 );

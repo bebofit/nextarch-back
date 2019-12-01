@@ -24,7 +24,8 @@ router.post('/createForm', authenticate, async (req, res) => {
       outputs: req.body.outputs,
       stakeholders: [req.body.stakeholders],
       challenges: req.body.challenges,
-      constitution: req.body.constitution
+      constitution: req.body.constitution,
+      discId: req.body.discId
     });
     return res.send({ form });
   } catch (error) {
@@ -43,24 +44,23 @@ router.post('rejectForm', adminMiddleware, async (req, res) => {
 
 router.post('/accecptForm', adminMiddleware, async (req, res) => {
   try {
-    const discId = req.body.descId;
     const formId = req.body.formId;
-    const disc = await Disscusion.findOne({ _id: discId });
     const form = await Form.findOne({ _id: formId });
+    const disc = await Disscusion.findOne({ _id: form.discId });
     const privateDisc = await PrivateDisscusion.create({
       title: disc.title,
       desc: disc.desc,
       category: disc.category,
       keywords: disc.keywords,
       imageurl: disc.imageurl,
-      Disc: discId,
+      Disc: form.discId,
       userid: disc.userid,
       comments: disc.comments,
       lastpost: disc.lastpost,
       users: form.stakeholders
     });
     await Disscusion.findByIdAndUpdate(
-      { _id: discId },
+      { _id: form.discId },
       { $set: { privateDisc: privateDisc._id } }
     );
     await Form.findByIdAndDelete({ _id: formId });
