@@ -36,7 +36,7 @@ app.use('/comment', commentController);
 
 mongoose
   .connect(
-    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch?retryWrites=true`,
+    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch-dev?retryWrites=true`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .catch(err => {
