@@ -4,18 +4,12 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 3005;
 var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 const mongoose = require('mongoose');
+const { Notification } = require('./models/Notification');
+const { User } = require('./models/User');
 
 app.use(cors());
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//   if (req.method === 'OPTIONS') {
-//     return res.sendStatus(200);
-//   }
-//   next();
-// });
 app.use(bodyParser.json());
 
 var thinktankController = require('./controllers/thinkTankController');
@@ -47,6 +41,27 @@ mongoose
 
     http.listen(port, () => {
       console.log(`started on port ${port}`);
+    });
+
+    io.on('connection', function(socket) {
+      //notification types
+      socket.on('follow', async data => {
+        console.log(data);
+        const user = await User.findById({ _id: data.userId });
+        const noti = {
+          type: 'follow',
+          userId: data.userId,
+          otherUserId: data.otherUserId,
+          title: 'New Follower',
+          message: `${user.name} has followed you!`
+        };
+        const createdNotification = await Notification.create(noti);
+        await User.findByIdAndUpdate(
+          { _id: data.otherUserId },
+          { $push: { notification: createdNotification._id } }
+        );
+        io.sockets.emit(data.otherUserId, noti);
+      });
     });
   });
 

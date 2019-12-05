@@ -57,7 +57,12 @@ var UserSchema = new Schema(
         ref: 'Disscusion'
       }
     ],
-
+    notification: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Notification'
+      }
+    ],
     favproj: [
       {
         type: Schema.Types.ObjectId,

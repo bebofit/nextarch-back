@@ -22,6 +22,12 @@ router.post('/getuser', authenticate, async (req, res) => {
   res.send(user);
 });
 
+router.post('/getNotifications', authenticate, async (req, res) => {
+  const user = await User.findOne({ _id: req.body.id })
+    .select('notification')
+    .populate('notification');
+  res.send(user).status(200);
+});
 router.post('/getOtherUser', authenticate, async (req, res) => {
   let user = await User.findOne({ _id: req.body.userId });
   const otherUser = await User.findOne({ _id: req.body.otherUserId });
