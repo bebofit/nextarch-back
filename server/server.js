@@ -8,7 +8,7 @@ var io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const { Notification } = require('./models/Notification');
 const { User } = require('./models/User');
-
+const { Disscusion } = require('./models/disscusion');
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -54,6 +54,26 @@ mongoose
           otherUserId: data.otherUserId,
           title: 'New Follower',
           message: `${user.name} has followed you!`
+        };
+        const createdNotification = await Notification.create(noti);
+        await User.findByIdAndUpdate(
+          { _id: data.otherUserId },
+          { $push: { notification: createdNotification._id } }
+        );
+        io.sockets.emit(data.otherUserId, noti);
+      });
+
+      socket.on('mention', async data => {
+        console.log(data);
+        const user = await User.findById({ _id: data.userId });
+        const disc = await Disscusion.findById({ _id: data.discId });
+        const noti = {
+          type: 'mention',
+          userId: data.userId,
+          discId: data.discId,
+          otherUserId: data.otherUserId,
+          title: `${user.name} Mentioned You`,
+          message: `${user.name} has mentioned you in ${disc.title} Disscusion!`
         };
         const createdNotification = await Notification.create(noti);
         await User.findByIdAndUpdate(

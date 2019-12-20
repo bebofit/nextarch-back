@@ -216,8 +216,7 @@ router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
     const discs = await Disscusion.find({})
       .populate({
         path: 'comments',
-        select: 'imageurl commentor',
-        populate: { path: 'commentor', select: 'name' }
+        populate: { path: 'commentor' }
       })
       .populate('userid', 'name')
       .populate('users', 'name');

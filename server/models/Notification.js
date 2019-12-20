@@ -35,6 +35,16 @@ var notiSchema = new Schema(
     message: {
       type: String,
       required: true
+    },
+    discId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Disscusion',
+      default: null
+    },
+    privateDiscId: {
+      type: Schema.Types.ObjectId,
+      ref: 'PrivateDisscusion',
+      default: null
     }
   },
   { timestamps: true }
