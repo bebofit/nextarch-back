@@ -82,6 +82,11 @@ mongoose
         );
         io.sockets.emit(data.otherUserId, noti);
       });
+
+      //comments io
+      socket.on('postComment', data => {
+        io.sockets.emit(data.discId, data.commentData);
+      });
     });
   });
 
