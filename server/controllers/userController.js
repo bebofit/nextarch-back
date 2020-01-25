@@ -16,9 +16,10 @@ router.use(
 router.use(bodyParser.json());
 
 router.post('/getuser', authenticate, async (req, res) => {
-  var user = await User.findOne({ _id: req.body.id }).select(
-    '-password -tokens -securityQuestion -securityQuestionAnswer'
-  );
+  var user = await User.findOne({ _id: req.body.id })
+    .select('-password -tokens -securityQuestion -securityQuestionAnswer')
+    .populate('followers', 'name desc imageurl username')
+    .populate('following', 'name desc imageurl username');
   res.send(user);
 });
 

@@ -201,7 +201,8 @@ router.post('/getalldisc', async (req, res) => {
       'title',
       'category',
       'lastCommentUserName',
-      'imageurl'
+      'imageurl',
+      'createdAt'
     ]);
     discs[i] = result;
   }
