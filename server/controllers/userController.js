@@ -16,10 +16,23 @@ router.use(
 router.use(bodyParser.json());
 
 router.post('/getuser', authenticate, async (req, res) => {
-  var user = await User.findOne({ _id: req.body.id })
-    .select('-password -tokens -securityQuestion -securityQuestionAnswer')
-    .populate('followers', 'name desc imageurl username')
+  const user = await User.findOne({ _id: req.body.id }).select(
+    '-password -tokens -securityQuestion -securityQuestionAnswer'
+  );
+  res.send(user);
+});
+
+router.post('/getuserFollowing', authenticate, async (req, res) => {
+  const user = await User.findOne({ _id: req.body.id })
+    .select('following')
     .populate('following', 'name desc imageurl username');
+  res.send(user);
+});
+
+router.post('/getuserFollowers', authenticate, async (req, res) => {
+  const user = await User.findOne({ _id: req.body.id })
+    .select('followers')
+    .populate('followers', 'name desc imageurl username');
   res.send(user);
 });
 
