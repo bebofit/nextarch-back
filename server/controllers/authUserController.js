@@ -1,11 +1,11 @@
-const { User } = require('../models/User');
-const { authenticate } = require('../middleware/authenticate');
-const { Disscusion } = require('../models/disscusion');
-var CryptoJS = require('crypto-js');
+const { User } = require("../models/User");
+const { authenticate } = require("../middleware/authenticate");
+const { Disscusion } = require("../models/disscusion");
+var CryptoJS = require("crypto-js");
 
-var express = require('express');
-var bodyParser = require('body-parser');
-const _ = require('lodash');
+var express = require("express");
+var bodyParser = require("body-parser");
+const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -16,26 +16,26 @@ router.use(
 router.use(bodyParser.json());
 
 const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
 ];
 
-router.post('/signup', (req, res) => {
+router.post("/signup", (req, res) => {
   // var body = _.pick(req.body);
   let createdAt = new Date();
   var ciphertext = CryptoJS.AES.encrypt(
     req.body.password,
-    'cabonourhanysisa1997'
+    "cabonourhanysisa1997"
   );
   // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
   var user = new User({
@@ -78,21 +78,23 @@ router.post('/signup', (req, res) => {
     });
 });
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   email = req.body.email;
   password = req.body.password;
   var user = await User.findOne({ email: email });
   if (!user) {
-    return res.status(400).send({ msg: 'No user exsist!' });
+    return res
+      .status(400)
+      .send({ msg: "No User With That Email Exists, Yet!" });
   }
   let bytes = CryptoJS.AES.decrypt(
     user.password.toString(),
-    'cabonourhanysisa1997'
+    "cabonourhanysisa1997"
   );
   var plaintext = bytes.toString(CryptoJS.enc.Utf8);
 
   if (plaintext != password) {
-    return res.status(400).send({ msg: 'Invalid Password' });
+    return res.status(400).send({ msg: "Invalid Password" });
   } else {
     const token = await user.generateAuthToken();
     const userObject = user.toJSON();
@@ -108,18 +110,18 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.delete('/me/token', authenticate, async (req, res) => {
+router.delete("/me/token", authenticate, async (req, res) => {
   try {
     await req.user.removeToken(req.token);
     res.status(200).send({
-      msg: 'Removed Token!'
+      msg: "Removed Token!"
     });
   } catch (error) {
     res.status(400).send();
   }
 });
 
-router.post('/changePassword', authenticate, async (req, res) => {
+router.post("/changePassword", authenticate, async (req, res) => {
   userID = req.body.userid;
   old = req.body.old;
   newPassword = req.body.newPassword;
@@ -129,22 +131,22 @@ router.post('/changePassword', authenticate, async (req, res) => {
   }).exec();
   if (!user) {
     return res.status(400).send({
-      msg: 'Invalid credentials'
+      msg: "Invalid credentials"
     });
   }
 
   let bytes = CryptoJS.AES.decrypt(
     user.password.toString(),
-    'cabonourhanysisa1997'
+    "cabonourhanysisa1997"
   );
   var plaintext = bytes.toString(CryptoJS.enc.Utf8);
 
   if (plaintext != old) {
     return res.status(400).send({
-      msg: 'Invalid Password'
+      msg: "Invalid Password"
     });
   }
-  var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
+  var ciphertext = CryptoJS.AES.encrypt(newPassword, "cabonourhanysisa1997");
 
   user.password = ciphertext;
   var newUser = await user.save();
@@ -158,7 +160,7 @@ router.post('/changePassword', authenticate, async (req, res) => {
   });
 });
 
-router.post('/checkEmail', async (req, res) => {
+router.post("/checkEmail", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -170,7 +172,7 @@ router.post('/checkEmail', async (req, res) => {
   }
 });
 
-router.post('/checkSecurityQuestion', async (req, res) => {
+router.post("/checkSecurityQuestion", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -188,14 +190,14 @@ router.post('/checkSecurityQuestion', async (req, res) => {
   }
 });
 
-router.post('/changeForgotPassword', async (req, res) => {
+router.post("/changeForgotPassword", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).send("user doesn't exist");
     }
     newPassword = req.body.newPassword;
-    var ciphertext = CryptoJS.AES.encrypt(newPassword, 'cabonourhanysisa1997');
+    var ciphertext = CryptoJS.AES.encrypt(newPassword, "cabonourhanysisa1997");
     user.password = ciphertext;
     await user.save();
     return res.status(200).send({

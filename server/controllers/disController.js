@@ -1,10 +1,10 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-const _ = require('lodash');
-const { authenticate } = require('../middleware/authenticate');
-const { User } = require('../models/User');
-const { Disscusion } = require('../models/disscusion');
-const { Comment } = require('../models/comment');
+var express = require("express");
+var bodyParser = require("body-parser");
+const _ = require("lodash");
+const { authenticate } = require("../middleware/authenticate");
+const { User } = require("../models/User");
+const { Disscusion } = require("../models/disscusion");
+const { Comment } = require("../models/comment");
 
 var router = express.Router();
 router.use(
@@ -14,7 +14,7 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.post('/creatediss', async (req, res) => {
+router.post("/creatediss", async (req, res) => {
   try {
     let discus = await new Disscusion({
       title: req.body.title,
@@ -34,7 +34,7 @@ router.post('/creatediss', async (req, res) => {
   }
 });
 
-router.get('/:discId', async (req, res) => {
+router.get("/:discId", async (req, res) => {
   let disc = await Disscusion.findOne({
     _id: req.params.discId
   });
@@ -42,7 +42,7 @@ router.get('/:discId', async (req, res) => {
   const muser = await User.findById({
     _id: disc.userid[0]
   });
-  let filteredMainUser = _.pick(muser, ['_id', 'name']);
+  let filteredMainUser = _.pick(muser, ["_id", "name"]);
   disc.userid[0] = filteredMainUser;
 
   if (disc.comments.length != 0) {
@@ -53,7 +53,7 @@ router.get('/:discId', async (req, res) => {
       const user = await User.findById({
         _id: mainComment.commentor[0]
       });
-      let filteredUser = _.pick(user, ['_id', 'name']);
+      let filteredUser = _.pick(user, ["_id", "name", "imageurl"]);
       mainComment.commentor[0] = filteredUser;
       disc.comments[j] = mainComment;
     }
@@ -64,7 +64,7 @@ router.get('/:discId', async (req, res) => {
       const el = await User.findById({
         _id: disc.users[k]._id
       });
-      let result = _.pick(el, ['_id', 'name']);
+      let result = _.pick(el, ["_id", "name"]);
       disc.users[k] = result;
     }
   }
@@ -72,7 +72,7 @@ router.get('/:discId', async (req, res) => {
 });
 
 router.post(
-  '/checkLikedCommentsForDiscByUser',
+  "/checkLikedCommentsForDiscByUser",
   authenticate,
   async (req, res) => {
     const commentsStatus = [];
@@ -100,7 +100,7 @@ router.post(
   }
 );
 
-router.post('/checkDisckStarredByUser', authenticate, async (req, res) => {
+router.post("/checkDisckStarredByUser", authenticate, async (req, res) => {
   let discStatus = 0;
   const user = await User.findById({
     _id: req.body.userId
@@ -120,7 +120,7 @@ router.post('/checkDisckStarredByUser', authenticate, async (req, res) => {
   res.status(200).send({ status: discStatus });
 });
 
-router.post('/getmydiscs', authenticate, async (req, res) => {
+router.post("/getmydiscs", authenticate, async (req, res) => {
   let discs = await Disscusion.find({
     userid: [req.body.userid]
   });
@@ -134,7 +134,7 @@ router.post('/getmydiscs', authenticate, async (req, res) => {
         const user = await User.findById({
           _id: element.commentor[0]
         });
-        let result = _.pick(user, ['_id', 'name']);
+        let result = _.pick(user, ["_id", "name", "imageurl"]);
         element.commentor[0] = result;
         discs[i].comments[j] = element;
       }
@@ -143,7 +143,7 @@ router.post('/getmydiscs', authenticate, async (req, res) => {
           const el = await User.findById({
             _id: discs[i].users[k]._id
           });
-          let result = _.pick(el, ['_id', 'name']);
+          let result = _.pick(el, ["_id", "name"]);
           discs[i].users[k] = result;
         }
       }
@@ -152,19 +152,19 @@ router.post('/getmydiscs', authenticate, async (req, res) => {
   res.status(200).send(discs);
 });
 
-router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
+router.post("/getMyStarredDiscs", authenticate, async (req, res) => {
   try {
     let finalStarredDiscs = [];
     const user = await User.findById({ _id: req.body.userId });
     for (let i = 0; i < user.favdisc.length; i++) {
       const discussion = await Disscusion.findById({ _id: user.favdisc[i] });
       const filteredDisc = _.pick(discussion, [
-        '_id',
-        'desc',
-        'title',
-        'category',
-        'createdAt',
-        'imageurl'
+        "_id",
+        "desc",
+        "title",
+        "category",
+        "createdAt",
+        "imageurl"
       ]);
       finalStarredDiscs.push(filteredDisc);
     }
@@ -174,9 +174,9 @@ router.post('/getMyStarredDiscs', authenticate, async (req, res) => {
   }
 });
 
-router.post('/getalldisc', async (req, res) => {
+router.post("/getalldisc", async (req, res) => {
   let discs = await Disscusion.find({});
-  let lastPostUserName = '';
+  let lastPostUserName = "";
   for (let i = 0; i < discs.length; i++) {
     const muser = await User.findById({
       _id: discs[i].userid[0]
@@ -189,27 +189,27 @@ router.post('/getalldisc', async (req, res) => {
       const lastPostUser = await User.findById({
         _id: lastComment.commentor[0]
       });
-      lastPostUserName = _.pick(lastPostUser, ['name']);
+      lastPostUserName = _.pick(lastPostUser, ["name", "imageurl"]);
       discs[i].lastCommentUserName = lastPostUserName.name;
     } else {
-      lastPostUserName = _.pick(muser, ['name']);
+      lastPostUserName = _.pick(muser, ["name"]);
       discs[i].lastCommentUserName = lastPostUserName.name;
     }
     let result = _.pick(discs[i], [
-      '_id',
-      'desc',
-      'title',
-      'category',
-      'lastCommentUserName',
-      'imageurl',
-      'createdAt'
+      "_id",
+      "desc",
+      "title",
+      "category",
+      "lastCommentUserName",
+      "imageurl",
+      "createdAt"
     ]);
     discs[i] = result;
   }
   res.status(200).send({ discs });
 });
 
-router.post('/stardisc', authenticate, async (req, res) => {
+router.post("/stardisc", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
@@ -223,14 +223,14 @@ router.post('/stardisc', authenticate, async (req, res) => {
     );
 
     res.status(200).send({
-      msg: 'starred disc'
+      msg: "starred disc"
     });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.post('/unstardisc', authenticate, async (req, res) => {
+router.post("/unstardisc", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
@@ -244,14 +244,14 @@ router.post('/unstardisc', authenticate, async (req, res) => {
     );
 
     res.status(200).send({
-      msg: 'unstarred disc'
+      msg: "unstarred disc"
     });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.post('/updateimage', authenticate, async (req, res) => {
+router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await Disscusion.findByIdAndUpdate(
       {
@@ -270,7 +270,7 @@ router.post('/updateimage', authenticate, async (req, res) => {
   }
 });
 
-router.post('/trending', async (req, res) => {
+router.post("/trending", async (req, res) => {
   let discs = await Disscusion.aggregate([
     {
       $project: {
@@ -280,7 +280,7 @@ router.post('/trending', async (req, res) => {
         category: 1,
         createdAt: 1,
         imageurl: 1,
-        length: { $size: '$users' }
+        length: { $size: "$users" }
       }
     },
     { $sort: { length: -1 } },
@@ -289,18 +289,18 @@ router.post('/trending', async (req, res) => {
   return res.status(200).send({ discs });
 });
 
-router.post('/latest', async (req, res) => {
+router.post("/latest", async (req, res) => {
   let finalDiscs = [];
-  const discs = await Disscusion.find({}).sort('-createdAt');
+  const discs = await Disscusion.find({}).sort("-createdAt");
   for (let k = 0; k < 5; k++) {
     if (k >= discs.length) break;
     const filteredDisc = _.pick(discs[k], [
-      '_id',
-      'desc',
-      'title',
-      'category',
-      'createdAt',
-      'imageurl'
+      "_id",
+      "desc",
+      "title",
+      "category",
+      "createdAt",
+      "imageurl"
     ]);
     finalDiscs.push(filteredDisc);
   }

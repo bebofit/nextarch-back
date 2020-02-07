@@ -1,15 +1,15 @@
-const { Admin } = require('../models/Admin');
-const { User } = require('../models/User');
-const { Disscusion } = require('../models/disscusion');
-const { PrivateDisscusion } = require('../models/private-discusion');
-const { Comment } = require('../models/comment');
-const { Form } = require('../models/Form');
-const { adminMiddleware } = require('../middleware/admin-middleware');
-var CryptoJS = require('crypto-js');
-const jwt = require('jsonwebtoken');
-var express = require('express');
-var bodyParser = require('body-parser');
-const _ = require('lodash');
+const { Admin } = require("../models/Admin");
+const { User } = require("../models/User");
+const { Disscusion } = require("../models/disscusion");
+const { PrivateDisscusion } = require("../models/private-discusion");
+const { Comment } = require("../models/comment");
+const { Form } = require("../models/Form");
+const { adminMiddleware } = require("../middleware/admin-middleware");
+var CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
+var express = require("express");
+var bodyParser = require("body-parser");
+const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -19,19 +19,19 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.get('/getAllAdmins', adminMiddleware, async (req, res) => {
+router.get("/getAllAdmins", adminMiddleware, async (req, res) => {
   try {
-    const admins = await Admin.find({}).select('-password');
+    const admins = await Admin.find({}).select("-password");
     res.send({ admins }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getAdminById/:adminId', adminMiddleware, async (req, res) => {
+router.get("/getAdminById/:adminId", adminMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({ _id: req.params.adminId }).select(
-      '-password'
+      "-password"
     );
     res.send({ admin }).status(200);
   } catch (error) {
@@ -39,11 +39,11 @@ router.get('/getAdminById/:adminId', adminMiddleware, async (req, res) => {
   }
 });
 
-router.post('/createAdmin', adminMiddleware, async (req, res) => {
+router.post("/createAdmin", adminMiddleware, async (req, res) => {
   try {
     var ciphertext = CryptoJS.AES.encrypt(
       req.body.password,
-      'cabonourhanysisa1997'
+      "cabonourhanysisa1997"
     );
     const admin = await Admin.create({
       email: req.body.email,
@@ -53,7 +53,7 @@ router.post('/createAdmin', adminMiddleware, async (req, res) => {
     });
     const adminObject = admin.toJSON();
     delete adminObject.password;
-    const token = jwt.sign({ isAdmin: true, adminId: admin._id }, 'nourhany');
+    const token = jwt.sign({ isAdmin: true, adminId: admin._id }, "nourhany");
     res.send({
       admin: adminObject,
       token
@@ -63,7 +63,7 @@ router.post('/createAdmin', adminMiddleware, async (req, res) => {
   }
 });
 
-router.patch('/updateAdmin', adminMiddleware, async (req, res) => {
+router.patch("/updateAdmin", adminMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findByIdAndUpdate(
       { _id: req.body.adminId },
@@ -86,9 +86,9 @@ router.patch('/updateAdmin', adminMiddleware, async (req, res) => {
   }
 });
 
-router.delete('/deleteAdmin/:adminId', adminMiddleware, async (req, res) => {
+router.delete("/deleteAdmin/:adminId", adminMiddleware, async (req, res) => {
   try {
-    if (req.body.adminPass != 'DeletingAndIamSure2019') {
+    if (req.body.adminPass != "DeletingAndIamSure2019") {
       return res.sendStatus(403);
     }
     await Admin.deleteOne({ _id: req.params.adminId });
@@ -100,39 +100,39 @@ router.delete('/deleteAdmin/:adminId', adminMiddleware, async (req, res) => {
 
 //BAAAA Users
 
-router.get('/getAllUsers', adminMiddleware, async (req, res) => {
+router.get("/getAllUsers", adminMiddleware, async (req, res) => {
   try {
     const users = await User.find({})
-      .select('-password -tokens -securityQuestionAnswer')
-      .populate('favdisc')
-      .populate('favproj')
-      .populate('followers', 'name')
-      .populate('following', 'name');
+      .select("-password -tokens -securityQuestionAnswer")
+      .populate("favdisc")
+      .populate("favproj")
+      .populate("followers", "name")
+      .populate("following", "name");
     res.send({ users }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getUserById/:userId', adminMiddleware, async (req, res) => {
+router.get("/getUserById/:userId", adminMiddleware, async (req, res) => {
   try {
     const user = await User.findById({ _id: req.params.userId })
-      .select('-password -tokens -securityQuestionAnswer')
-      .populate('favdisc')
-      .populate('favproj')
-      .populate('followers', 'name')
-      .populate('following', 'name');
+      .select("-password -tokens -securityQuestionAnswer")
+      .populate("favdisc")
+      .populate("favproj")
+      .populate("followers", "name")
+      .populate("following", "name");
     res.send({ user }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.post('/createUser', adminMiddleware, async (req, res) => {
+router.post("/createUser", adminMiddleware, async (req, res) => {
   try {
     var ciphertext = CryptoJS.AES.encrypt(
       req.body.password,
-      'cabonourhanysisa1997'
+      "cabonourhanysisa1997"
     );
     const createdAt = new Date();
     const user = await User.create({
@@ -155,7 +155,7 @@ router.post('/createUser', adminMiddleware, async (req, res) => {
       createdAt
     });
 
-    const token = jwt.sign({}, 'nourhany');
+    const token = jwt.sign({}, "nourhany");
     res.send({
       user,
       token
@@ -165,7 +165,7 @@ router.post('/createUser', adminMiddleware, async (req, res) => {
   }
 });
 
-router.patch('/updateUser', adminMiddleware, async (req, res) => {
+router.patch("/updateUser", adminMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       { _id: req.body.userId },
@@ -198,9 +198,9 @@ router.patch('/updateUser', adminMiddleware, async (req, res) => {
   }
 });
 
-router.delete('/deleteUser/:userId', adminMiddleware, async (req, res) => {
+router.delete("/deleteUser/:userId", adminMiddleware, async (req, res) => {
   try {
-    if (req.body.adminPass != 'DeletingAndIamSure2019') {
+    if (req.body.adminPass != "DeletingAndIamSure2019") {
       return res.sendStatus(403);
     }
     await User.deleteOne({ _id: req.params.userId });
@@ -211,42 +211,42 @@ router.delete('/deleteUser/:userId', adminMiddleware, async (req, res) => {
 });
 
 //BAAAA Disscusions
-router.get('/getAllDiscs', adminMiddleware, async (req, res) => {
+router.get("/getAllDiscs", adminMiddleware, async (req, res) => {
   try {
     const discs = await Disscusion.find({})
       .populate({
-        path: 'comments',
-        populate: { path: 'commentor' }
+        path: "comments",
+        populate: { path: "commentor" }
       })
-      .populate('userid', 'name')
-      .populate('users', 'name');
+      .populate("userid", "name")
+      .populate("users", "name");
     res.send({ discs }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getDiscById/:discId', adminMiddleware, async (req, res) => {
+router.get("/getDiscById/:discId", adminMiddleware, async (req, res) => {
   try {
     const disc = await Disscusion.findById({ _id: req.params.discId })
       .populate({
-        path: 'comments',
-        select: 'imageurl commentor',
-        populate: { path: 'commentor', select: 'name' }
+        path: "comments",
+        select: "imageurl commentor",
+        populate: { path: "commentor", select: "name imageurl" }
       })
-      .populate('userid', 'name')
-      .populate('users', 'name');
+      .populate("userid", "name")
+      .populate("users", "name");
     res.send({ disc }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.post('/createDisc', adminMiddleware, async (req, res) => {
+router.post("/createDisc", adminMiddleware, async (req, res) => {
   try {
     var ciphertext = CryptoJS.AES.encrypt(
       req.body.password,
-      'cabonourhanysisa1997'
+      "cabonourhanysisa1997"
     );
     const disc = await Disscusion.create({
       title: req.body.title,
@@ -265,7 +265,7 @@ router.post('/createDisc', adminMiddleware, async (req, res) => {
   }
 });
 
-router.patch('/updateDisc', adminMiddleware, async (req, res) => {
+router.patch("/updateDisc", adminMiddleware, async (req, res) => {
   try {
     const disc = await Disscusion.findByIdAndUpdate(
       { _id: req.body.discId },
@@ -288,9 +288,9 @@ router.patch('/updateDisc', adminMiddleware, async (req, res) => {
   }
 });
 
-router.delete('/deleteDisc/:discId', adminMiddleware, async (req, res) => {
+router.delete("/deleteDisc/:discId", adminMiddleware, async (req, res) => {
   try {
-    if (req.body.adminPass != 'DeletingAndIamSure2019') {
+    if (req.body.adminPass != "DeletingAndIamSure2019") {
       return res.sendStatus(403);
     }
     await Disscusion.deleteOne({ _id: req.params.discId });
@@ -301,45 +301,45 @@ router.delete('/deleteDisc/:discId', adminMiddleware, async (req, res) => {
 });
 
 //BAAAA Private Disscusions
-router.get('/getAllPrivateDiscs', adminMiddleware, async (req, res) => {
+router.get("/getAllPrivateDiscs", adminMiddleware, async (req, res) => {
   try {
     const discs = await PrivateDisscusion.find({})
       .populate({
-        path: 'comments',
-        select: 'imageurl commentor',
-        populate: { path: 'commentor', select: 'name' }
+        path: "comments",
+        select: "imageurl commentor",
+        populate: { path: "commentor", select: "name imageurl" }
       })
-      .populate('userid', 'name')
-      .populate('users', 'name');
+      .populate("userid", "name")
+      .populate("users", "name");
     res.send({ discs }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getPrivateDiscById/:discId', adminMiddleware, async (req, res) => {
+router.get("/getPrivateDiscById/:discId", adminMiddleware, async (req, res) => {
   try {
     const disc = await PrivateDisscusion.findById({
       _id: req.params.discId
     })
       .populate({
-        path: 'comments',
-        select: 'imageurl commentor',
-        populate: { path: 'commentor', select: 'name' }
+        path: "comments",
+        select: "imageurl commentor",
+        populate: { path: "commentor", select: "name imageurl" }
       })
-      .populate('userid', 'name')
-      .populate('users', 'name');
+      .populate("userid", "name")
+      .populate("users", "name");
     res.send({ disc }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.post('/createPrivateDisc', adminMiddleware, async (req, res) => {
+router.post("/createPrivateDisc", adminMiddleware, async (req, res) => {
   try {
     var ciphertext = CryptoJS.AES.encrypt(
       req.body.password,
-      'cabonourhanysisa1997'
+      "cabonourhanysisa1997"
     );
     const disc = await PrivateDisscusion.create({
       title: req.body.title,
@@ -359,7 +359,7 @@ router.post('/createPrivateDisc', adminMiddleware, async (req, res) => {
   }
 });
 
-router.patch('/updatePrivateDisc', adminMiddleware, async (req, res) => {
+router.patch("/updatePrivateDisc", adminMiddleware, async (req, res) => {
   try {
     const disc = await PrivateDisscusion.findByIdAndUpdate(
       { _id: req.body.discId },
@@ -383,11 +383,11 @@ router.patch('/updatePrivateDisc', adminMiddleware, async (req, res) => {
 });
 
 router.delete(
-  '/deletePrivateDisc/:discId',
+  "/deletePrivateDisc/:discId",
   adminMiddleware,
   async (req, res) => {
     try {
-      if (req.body.adminPass != 'DeletingAndIamSure2019') {
+      if (req.body.adminPass != "DeletingAndIamSure2019") {
         return res.sendStatus(403);
       }
       await PrivateDisscusion.deleteOne({ _id: req.params.discId });
@@ -399,31 +399,31 @@ router.delete(
 );
 
 //BAAAA Comments
-router.get('/getAllComments', adminMiddleware, async (req, res) => {
+router.get("/getAllComments", adminMiddleware, async (req, res) => {
   try {
     const comments = await Comment.find({})
-      .populate('commentor', 'name')
-      .populate('likesarray', 'name');
+      .populate("commentor", "name imageurl")
+      .populate("likesarray", "name");
     res.send({ comments }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getCommentById/:commentId', adminMiddleware, async (req, res) => {
+router.get("/getCommentById/:commentId", adminMiddleware, async (req, res) => {
   try {
     const comment = await Comment.findById({
       _id: req.params.commentId
     })
-      .populate('commentor', 'name')
-      .populate('likesarray', 'name');
+      .populate("commentor", "name")
+      .populate("likesarray", "name");
     res.send({ comment }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.post('/createComment', adminMiddleware, async (req, res) => {
+router.post("/createComment", adminMiddleware, async (req, res) => {
   try {
     let createdat = new Date();
     const comment = await Comment.create({
@@ -440,7 +440,7 @@ router.post('/createComment', adminMiddleware, async (req, res) => {
   }
 });
 
-router.patch('/updateComment', adminMiddleware, async (req, res) => {
+router.patch("/updateComment", adminMiddleware, async (req, res) => {
   try {
     const comment = await Comment.findByIdAndUpdate(
       { _id: req.body.commentId },
@@ -461,11 +461,11 @@ router.patch('/updateComment', adminMiddleware, async (req, res) => {
 });
 
 router.delete(
-  '/deleteComment/:commentId',
+  "/deleteComment/:commentId",
   adminMiddleware,
   async (req, res) => {
     try {
-      if (req.body.adminPass != 'DeletingAndIamSure2019') {
+      if (req.body.adminPass != "DeletingAndIamSure2019") {
         return res.sendStatus(403);
       }
       await Comment.deleteOne({ _id: req.params.commentId });
@@ -477,20 +477,20 @@ router.delete(
 );
 
 //BAAAA FORMS
-router.get('/getAllForms', adminMiddleware, async (req, res) => {
+router.get("/getAllForms", adminMiddleware, async (req, res) => {
   try {
-    const forms = await Form.find({}).populate('stakeholders', 'name');
+    const forms = await Form.find({}).populate("stakeholders", "name");
     res.send({ forms }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get('/getFormById/:formId', adminMiddleware, async (req, res) => {
+router.get("/getFormById/:formId", adminMiddleware, async (req, res) => {
   try {
     const form = await Form.findById({
       _id: req.params.formId
-    }).populate('stakeholders', 'name');
+    }).populate("stakeholders", "name");
     res.send({ form }).status(200);
   } catch (error) {
     res.status(500).send(error);
