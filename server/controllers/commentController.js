@@ -1,6 +1,6 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-const _ = require('lodash');
+var express = require("express");
+var bodyParser = require("body-parser");
+const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -10,13 +10,13 @@ router.use(
 );
 router.use(bodyParser.json());
 //midddleware
-const { authenticate } = require('../middleware/authenticate');
+const { authenticate } = require("../middleware/authenticate");
 //models
-const { User } = require('../models/User');
-const { Disscusion } = require('../models/disscusion');
-const { Comment } = require('../models/comment');
+const { User } = require("../models/User");
+const { Disscusion } = require("../models/disscusion");
+const { Comment } = require("../models/comment");
 
-router.post('/createcomment', authenticate, async (req, res) => {
+router.post("/createcomment", authenticate, async (req, res) => {
   try {
     let createdat = new Date();
 
@@ -40,16 +40,23 @@ router.post('/createcomment', authenticate, async (req, res) => {
         }
       }
     );
-
+    await User.update(
+      { _id: req.body.commentor },
+      {
+        $addToSet: {
+          activeDiscs: req.body.disid
+        }
+      }
+    );
     res.status(200).send({
-      msg: 'created comment'
+      msg: "created comment"
     });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.post('/likecomment', authenticate, async (req, res) => {
+router.post("/likecomment", authenticate, async (req, res) => {
   try {
     let maincomment = await Comment.findByIdAndUpdate(
       {
@@ -64,16 +71,23 @@ router.post('/likecomment', authenticate, async (req, res) => {
         }
       }
     );
-
+    await User.update(
+      { _id: req.body.userId },
+      {
+        $addToSet: {
+          activeDiscs: req.body.discId
+        }
+      }
+    );
     res.status(200).send({
-      msg: 'liked'
+      msg: "liked"
     });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.post('/unlikecomment', authenticate, async (req, res) => {
+router.post("/unlikecomment", authenticate, async (req, res) => {
   try {
     let maincomment = await Comment.findByIdAndUpdate(
       {
@@ -90,14 +104,14 @@ router.post('/unlikecomment', authenticate, async (req, res) => {
     );
 
     res.status(200).send({
-      msg: 'liked'
+      msg: "liked"
     });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.post('/updateimage', authenticate, async (req, res) => {
+router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await Comment.findByIdAndUpdate(
       {

@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const validator = require('validator');
-const jwt = require('jsonwebtoken');
+const validator = require("validator");
+const jwt = require("jsonwebtoken");
 // const bcrypt = require('bcryptjs')
-var CryptoJS = require('crypto-js');
-const _ = require('lodash');
+var CryptoJS = require("crypto-js");
+const _ = require("lodash");
 
 var UserSchema = new Schema(
   {
@@ -16,7 +16,7 @@ var UserSchema = new Schema(
       unique: true,
       validate: {
         validator: validator.isEmail,
-        message: '{value} is not an email'
+        message: "{value} is not an email"
       }
     },
     password: {
@@ -54,31 +54,32 @@ var UserSchema = new Schema(
     favdisc: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Disscusion'
+        ref: "Disscusion"
       }
     ],
+    activeDiscs: [{ type: Schema.Types.ObjectId, ref: "Disscusion" }],
     notification: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Notification'
+        ref: "Notification"
       }
     ],
     favproj: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Disscusion'
+        ref: "Disscusion"
       }
     ],
     followers: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User"
       }
     ],
     following: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User"
       }
     ],
     tokens: [
@@ -96,7 +97,7 @@ var UserSchema = new Schema(
     imageurl: {
       type: String,
       default:
-        'https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/uploads%2Fprof.png?alt=media&token=8a4582af-f778-44ab-93ca-0c32e09c0540'
+        "https://firebasestorage.googleapis.com/v0/b/nextarch-bce1a.appspot.com/o/uploads%2Fprof.png?alt=media&token=8a4582af-f778-44ab-93ca-0c32e09c0540"
     },
     status: {
       type: Number,
@@ -117,8 +118,8 @@ var UserSchema = new Schema(
 
 UserSchema.methods.generateAuthToken = function() {
   let user = this;
-  var access = 'auth';
-  var token = jwt.sign({ _id: user._id.toHexString(), access }, 'nourhany');
+  var access = "auth";
+  var token = jwt.sign({ _id: user._id.toHexString(), access }, "nourhany");
   user.tokens = user.tokens.concat([
     {
       access,
@@ -134,18 +135,18 @@ UserSchema.statics.findByCred = function(email, password) {
   var User = this;
   return User.findOne({ email }).then(user => {
     if (!user) {
-      return Promise.reject('no user exist');
+      return Promise.reject("no user exist");
     }
 
     return new Promise((resolve, reject) => {
       let bytes = CryptoJS.AES.decrypt(
         user.password.toString(),
-        'cabonourhanysisa1997'
+        "cabonourhanysisa1997"
       );
       var plaintext = bytes.toString(CryptoJS.enc.Utf8);
 
       if (plaintext != password) {
-        return Promise.reject('wrong password');
+        return Promise.reject("wrong password");
       } else {
         resolve(user);
       }
@@ -156,14 +157,14 @@ UserSchema.statics.findByToken = function(token) {
   let User = this;
   var decoded;
   try {
-    decoded = jwt.verify(token, 'nourhany');
+    decoded = jwt.verify(token, "nourhany");
   } catch (error) {
     return Promise.reject();
   }
   return User.findOne({
     _id: decoded._id,
-    'tokens.token': token,
-    'tokens.access': 'auth'
+    "tokens.token": token,
+    "tokens.access": "auth"
   });
 };
 
@@ -178,5 +179,5 @@ UserSchema.methods.removeToken = function(token) {
   });
 };
 
-var User = mongoose.model('User', UserSchema);
+var User = mongoose.model("User", UserSchema);
 module.exports = { User };

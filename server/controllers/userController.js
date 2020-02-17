@@ -1,11 +1,11 @@
-const { User } = require('../models/User');
-const { authenticate } = require('../middleware/authenticate');
-const { Disscusion } = require('../models/disscusion');
-var CryptoJS = require('crypto-js');
+const { User } = require("../models/User");
+const { authenticate } = require("../middleware/authenticate");
+const { Disscusion } = require("../models/disscusion");
+var CryptoJS = require("crypto-js");
 
-var express = require('express');
-var bodyParser = require('body-parser');
-const _ = require('lodash');
+var express = require("express");
+var bodyParser = require("body-parser");
+const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -15,34 +15,35 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.post('/getuser', authenticate, async (req, res) => {
+router.post("/getuser", authenticate, async (req, res) => {
   const user = await User.findOne({ _id: req.body.id }).select(
-    '-password -tokens -securityQuestion -securityQuestionAnswer'
+    "-password -tokens -securityQuestion -securityQuestionAnswer"
   );
   res.send(user);
 });
 
-router.post('/getuserFollowing', authenticate, async (req, res) => {
+router.post("/getuserFollowing", authenticate, async (req, res) => {
   const user = await User.findOne({ _id: req.body.id })
-    .select('following')
-    .populate('following', 'name desc imageurl username');
+    .select("following")
+    .populate("following", "name desc imageurl username");
   res.send(user);
 });
 
-router.post('/getuserFollowers', authenticate, async (req, res) => {
+router.post("/getuserFollowers", authenticate, async (req, res) => {
   const user = await User.findOne({ _id: req.body.id })
-    .select('followers')
-    .populate('followers', 'name desc imageurl username');
+    .select("followers")
+    .populate("followers", "name desc imageurl username");
   res.send(user);
 });
 
-router.post('/getNotifications', authenticate, async (req, res) => {
+router.post("/getNotifications", authenticate, async (req, res) => {
   const user = await User.findOne({ _id: req.body.id })
-    .select('notification')
-    .populate('notification');
+    .select("notification")
+    .populate("notification");
   res.send(user).status(200);
 });
-router.post('/getOtherUser', authenticate, async (req, res) => {
+
+router.post("/getOtherUser", authenticate, async (req, res) => {
   let user = await User.findOne({ _id: req.body.userId });
   const otherUser = await User.findOne({ _id: req.body.otherUserId });
   for (let i = 0; i < user.following.length; i++) {
@@ -60,7 +61,7 @@ router.post('/getOtherUser', authenticate, async (req, res) => {
   res.send({ otherUser: otherUserObject });
 });
 
-router.post('/edituser', authenticate, async (req, res) => {
+router.post("/edituser", authenticate, async (req, res) => {
   console.log(req.body);
 
   const user = await User.updateOne(
@@ -70,22 +71,22 @@ router.post('/edituser', authenticate, async (req, res) => {
   if (!user) {
     res.status(404);
   }
-  res.status(200).send({ msg: 'done' });
+  res.status(200).send({ msg: "done" });
 });
 
-router.post('/img', authenticate, async (req, res) => {
+router.post("/img", authenticate, async (req, res) => {
   try {
     let user = await User.findByIdAndUpdate(
       { _id: req.body.id },
       { imageurl: req.body.imgurl }
     );
-    res.send({ msg: 'done' });
+    res.send({ msg: "done" });
   } catch (error) {
     res.status(400).send();
   }
 });
 
-router.post('/updateimage', authenticate, async (req, res) => {
+router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       {
@@ -108,7 +109,7 @@ router.post('/updateimage', authenticate, async (req, res) => {
   }
 });
 
-router.post('/follow', authenticate, async (req, res) => {
+router.post("/follow", authenticate, async (req, res) => {
   try {
     const f1 = await User.findByIdAndUpdate(
       {
@@ -132,16 +133,16 @@ router.post('/follow', authenticate, async (req, res) => {
       }
     );
     res.status(200).send({
-      msg: 'followed'
+      msg: "followed"
     });
   } catch (error) {
     res.status(400).send({
-      msg: 'error ya sisa'
+      msg: "error ya sisa"
     });
   }
 });
 
-router.post('/unfollow', authenticate, async (req, res) => {
+router.post("/unfollow", authenticate, async (req, res) => {
   try {
     const f1 = await User.findByIdAndUpdate(
       {
@@ -165,16 +166,16 @@ router.post('/unfollow', authenticate, async (req, res) => {
       }
     );
     res.status(200).send({
-      msg: 'unfollowed'
+      msg: "unfollowed"
     });
   } catch (error) {
     res.status(400).send({
-      msg: 'error ya sisa'
+      msg: "error ya sisa"
     });
   }
 });
 
-router.post('/search', authenticate, async (req, res) => {
+router.post("/search", authenticate, async (req, res) => {
   try {
     let finalUsers = [];
     const search = req.body.search;
@@ -187,11 +188,11 @@ router.post('/search', authenticate, async (req, res) => {
     });
     const users = await User.find({
       $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
-    }).select('-password -tokens -securityQuestion -securityQuestionAnswer');
+    }).select("-password -tokens -securityQuestion -securityQuestionAnswer");
     res.status(200).send({ discussions, users });
   } catch (error) {
     res.status(400).send({
-      msg: 'error ya sisa'
+      msg: "error ya sisa"
     });
   }
 });
