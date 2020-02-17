@@ -16,7 +16,7 @@ router.use(bodyParser.json());
 
 router.post("/creatediss", async (req, res) => {
   try {
-    let discus = await new Disscusion({
+    const discus = await new Disscusion({
       title: req.body.title,
       desc: req.body.desc,
       category: req.body.category,
@@ -39,10 +39,10 @@ router.get("/:discId", async (req, res) => {
     _id: req.params.discId
   });
 
-  const muser = await User.findById({
+  const mainUser = await User.findById({
     _id: disc.userid[0]
   });
-  let filteredMainUser = _.pick(muser, ["_id", "name", "imageurl"]);
+  let filteredMainUser = _.pick(mainUser, ["_id", "name", "imageurl"]);
   disc.userid[0] = filteredMainUser;
 
   if (disc.comments.length != 0) {
