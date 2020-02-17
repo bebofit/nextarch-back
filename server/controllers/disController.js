@@ -42,7 +42,7 @@ router.get("/:discId", async (req, res) => {
   const muser = await User.findById({
     _id: disc.userid[0]
   });
-  let filteredMainUser = _.pick(muser, ["_id", "name"]);
+  let filteredMainUser = _.pick(muser, ["_id", "name", "imageurl"]);
   disc.userid[0] = filteredMainUser;
 
   if (disc.comments.length != 0) {
@@ -64,7 +64,7 @@ router.get("/:discId", async (req, res) => {
       const el = await User.findById({
         _id: disc.users[k]._id
       });
-      let result = _.pick(el, ["_id", "name"]);
+      let result = _.pick(el, ["_id", "name"], "imageurl");
       disc.users[k] = result;
     }
   }
@@ -143,7 +143,7 @@ router.post("/getmydiscs", authenticate, async (req, res) => {
           const el = await User.findById({
             _id: discs[i].users[k]._id
           });
-          let result = _.pick(el, ["_id", "name"]);
+          let result = _.pick(el, ["_id", "name", "imageurl"]);
           discs[i].users[k] = result;
         }
       }
@@ -192,7 +192,7 @@ router.post("/getalldisc", async (req, res) => {
       lastPostUserName = _.pick(lastPostUser, ["name", "imageurl"]);
       discs[i].lastCommentUserName = lastPostUserName.name;
     } else {
-      lastPostUserName = _.pick(muser, ["name"]);
+      lastPostUserName = _.pick(muser, ["name", "imageurl"]);
       discs[i].lastCommentUserName = lastPostUserName.name;
     }
     let result = _.pick(discs[i], [
