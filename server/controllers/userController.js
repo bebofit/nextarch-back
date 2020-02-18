@@ -19,7 +19,16 @@ router.post("/getuser", authenticate, async (req, res) => {
   const user = await User.findOne({ _id: req.body.id }).select(
     "-password -tokens -securityQuestion -securityQuestionAnswer"
   );
-  res.send(user);
+  res.status(200).send(user);
+});
+
+router.get("/getActiveDiscs", authenticate, async (req, res) => {
+  const discs = await (
+    await User.findOne({ _id: req.body.id }).select("activeDiscs")
+  ).populate("activeDiscs");
+  res.status(200).json({
+    discussions: discs
+  });
 });
 
 router.post("/getuserFollowing", authenticate, async (req, res) => {
