@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 3005;
+const port = process.env.PORT || 3000;
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
 const mongoose = require("mongoose");
@@ -17,7 +17,7 @@ var adminCrudsController = require("./controllers/adminCruds");
 var authAdminController = require("./controllers/authAdminController");
 var authUserController = require("./controllers/authUserController");
 var userController = require("./controllers/userController");
-var disController = require("./controllers/disController");
+var discussionController = require("./controllers/discussionController");
 var commentController = require("./controllers/commentController");
 
 app.use("/thinktank", thinktankController);
@@ -25,17 +25,19 @@ app.use("/adminCruds", adminCrudsController);
 app.use("/authAdmins", authAdminController);
 app.use("/authUsers", authUserController);
 app.use("/users", userController);
-app.use("/disc", disController);
+app.use("/disc", discussionController);
 app.use("/comment", commentController);
 
-// `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch-dev?retryWrites=true`,
+const devDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch-dev?retryWrites=true&w=majority`;
+const prodDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch?retryWrites=true&w=majority`;
 
 mongoose
-  .connect(
-    `mongodb+srv://nourhany:Nourhany@cluster0-ifrtn.mongodb.net/nextarch?retryWrites=true`,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
-  .catch(err => {
+  .connect(devDB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .catch((err) => {
     console.log(err);
   })
   .then(() => {
@@ -45,9 +47,9 @@ mongoose
       console.log(`started on port ${port}`);
     });
 
-    io.on("connection", function(socket) {
+    io.on("connection", function (socket) {
       //notification types
-      socket.on("follow", async data => {
+      socket.on("follow", async (data) => {
         console.log(data);
         const user = await User.findById({ _id: data.userId });
         const noti = {
@@ -55,7 +57,7 @@ mongoose
           userId: data.userId,
           otherUserId: data.otherUserId,
           title: "New Follower",
-          message: `${user.name} has followed you!`
+          message: `${user.name} has followed you!`,
         };
         const createdNotification = await Notification.create(noti);
         await User.findByIdAndUpdate(
@@ -65,7 +67,7 @@ mongoose
         io.sockets.emit(data.otherUserId, noti);
       });
 
-      socket.on("mention", async data => {
+      socket.on("mention", async (data) => {
         console.log(data);
         const user = await User.findById({ _id: data.userId });
         const disc = await Disscusion.findById({ _id: data.discId });
@@ -75,7 +77,7 @@ mongoose
           discId: data.discId,
           otherUserId: data.otherUserId,
           title: `${user.name} Mentioned You`,
-          message: `${user.name} has mentioned you in ${disc.title} Disscusion!`
+          message: `${user.name} has mentioned you in ${disc.title} Disscusion!`,
         };
         const createdNotification = await Notification.create(noti);
         await User.findByIdAndUpdate(
@@ -86,7 +88,7 @@ mongoose
       });
 
       //comments io
-      socket.on("postComment", data => {
+      socket.on("postComment", (data) => {
         io.sockets.emit(data.discId, data.commentData);
       });
     });
