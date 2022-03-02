@@ -1,6 +1,5 @@
 const { User } = require("../models/User");
 const { authenticate } = require("../middleware/authenticate");
-const { Disscusion } = require("../models/disscusion");
 var CryptoJS = require("crypto-js");
 
 var express = require("express");
@@ -10,25 +9,10 @@ const _ = require("lodash");
 var router = express.Router();
 router.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 router.use(bodyParser.json());
-
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
 
 router.post("/signup", (req, res) => {
   // var body = _.pick(req.body);
@@ -55,14 +39,14 @@ router.post("/signup", (req, res) => {
     securityQuestion: req.body.securityQuestion,
     securityQuestionAnswer: req.body.securityQuestionAnswer,
     password: ciphertext,
-    createdAt
+    createdAt,
   });
   user
     .save()
     .then(() => {
       return user.generateAuthToken();
     })
-    .then(token => {
+    .then((token) => {
       const userObject = user.toJSON();
       delete userObject.password;
       delete userObject.tokens;
@@ -70,10 +54,10 @@ router.post("/signup", (req, res) => {
       delete userObject.securityQuestionAnswer;
       res.send({
         user,
-        token: token
+        token: token,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(400).send(err);
     });
 });
@@ -105,7 +89,7 @@ router.post("/login", async (req, res) => {
 
     return res.send({
       user: userObject,
-      token: token
+      token: token,
     });
   }
 });
@@ -114,7 +98,7 @@ router.delete("/me/token", authenticate, async (req, res) => {
   try {
     await req.user.removeToken(req.token);
     res.status(200).send({
-      msg: "Removed Token!"
+      msg: "Removed Token!",
     });
   } catch (error) {
     res.status(400).send();
@@ -127,11 +111,11 @@ router.post("/changePassword", authenticate, async (req, res) => {
   newPassword = req.body.newPassword;
 
   var user = await Account.findOne({
-    _id: userID
+    _id: userID,
   }).exec();
   if (!user) {
     return res.status(400).send({
-      msg: "Invalid credentials"
+      msg: "Invalid credentials",
     });
   }
 
@@ -143,7 +127,7 @@ router.post("/changePassword", authenticate, async (req, res) => {
 
   if (plaintext != old) {
     return res.status(400).send({
-      msg: "Invalid Password"
+      msg: "Invalid Password",
     });
   }
   var ciphertext = CryptoJS.AES.encrypt(newPassword, "cabonourhanysisa1997");
@@ -156,7 +140,7 @@ router.post("/changePassword", authenticate, async (req, res) => {
   delete userObject.securityQuestion;
   delete userObject.securityQuestionAnswer;
   return res.status(200).send({
-    user: userObject
+    user: userObject,
   });
 });
 
@@ -185,7 +169,7 @@ router.post("/checkSecurityQuestion", async (req, res) => {
     }
   } catch (error) {
     res.status(400).send({
-      msg: error
+      msg: error,
     });
   }
 });
@@ -201,11 +185,11 @@ router.post("/changeForgotPassword", async (req, res) => {
     user.password = ciphertext;
     await user.save();
     return res.status(200).send({
-      status: true
+      status: true,
     });
   } catch (error) {
     res.status(400).send({
-      msg: error
+      msg: error,
     });
   }
 });

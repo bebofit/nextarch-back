@@ -1,8 +1,6 @@
 const { User } = require("../models/User");
 const { authenticate } = require("../middleware/authenticate");
 const { Disscusion } = require("../models/disscusion");
-var CryptoJS = require("crypto-js");
-
 var express = require("express");
 var bodyParser = require("body-parser");
 const _ = require("lodash");
@@ -10,7 +8,7 @@ const _ = require("lodash");
 var router = express.Router();
 router.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 router.use(bodyParser.json());
@@ -27,7 +25,7 @@ router.get("/getActiveDiscs", authenticate, async (req, res) => {
     await User.findOne({ _id: req.body.id }).select("activeDiscs")
   ).populate("activeDiscs");
   res.status(200).json({
-    discussions: discs
+    discussions: discs,
   });
 });
 
@@ -71,8 +69,6 @@ router.post("/getOtherUser", authenticate, async (req, res) => {
 });
 
 router.post("/edituser", authenticate, async (req, res) => {
-  console.log(req.body);
-
   const user = await User.updateOne(
     { _id: req.body.userId },
     { $set: req.body }
@@ -99,21 +95,21 @@ router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.userid,
       },
       {
-        imageurl: req.body.imageurl
+        imageurl: req.body.imageurl,
       },
       { new: true }
     );
     res.status(200).send({
-      msg: req.body.imageurl
+      msg: req.body.imageurl,
     });
   } catch (error) {
     console.log(error);
 
     res.status(400).send({
-      msg: error
+      msg: error,
     });
   }
 });
@@ -122,31 +118,31 @@ router.post("/follow", authenticate, async (req, res) => {
   try {
     const f1 = await User.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.userid,
       },
       {
         $push: {
-          following: req.body.otherid
-        }
+          following: req.body.otherid,
+        },
       }
     );
 
     const f2 = await User.findByIdAndUpdate(
       {
-        _id: req.body.otherid
+        _id: req.body.otherid,
       },
       {
         $push: {
-          followers: req.body.userid
-        }
+          followers: req.body.userid,
+        },
       }
     );
     res.status(200).send({
-      msg: "followed"
+      msg: "followed",
     });
   } catch (error) {
     res.status(400).send({
-      msg: "error ya sisa"
+      msg: "error ya sisa",
     });
   }
 });
@@ -155,31 +151,31 @@ router.post("/unfollow", authenticate, async (req, res) => {
   try {
     const f1 = await User.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.userid,
       },
       {
         $pull: {
-          following: req.body.otherid
-        }
+          following: req.body.otherid,
+        },
       }
     );
 
     const f2 = await User.findByIdAndUpdate(
       {
-        _id: req.body.otherid
+        _id: req.body.otherid,
       },
       {
         $pull: {
-          followers: req.body.userid
-        }
+          followers: req.body.userid,
+        },
       }
     );
     res.status(200).send({
-      msg: "unfollowed"
+      msg: "unfollowed",
     });
   } catch (error) {
     res.status(400).send({
-      msg: "error ya sisa"
+      msg: "error ya sisa",
     });
   }
 });
@@ -192,16 +188,16 @@ router.post("/search", authenticate, async (req, res) => {
       $or: [
         { keywords: new RegExp(search) },
         { title: new RegExp(search) },
-        { desc: new RegExp(search) }
-      ]
+        { desc: new RegExp(search) },
+      ],
     });
     const users = await User.find({
-      $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }]
+      $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }],
     }).select("-password -tokens -securityQuestion -securityQuestionAnswer");
     res.status(200).send({ discussions, users });
   } catch (error) {
     res.status(400).send({
-      msg: "error ya sisa"
+      msg: "error ya sisa",
     });
   }
 });
