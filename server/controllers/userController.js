@@ -184,14 +184,14 @@ router.post("/search", authenticate, async (req, res) => {
   try {
     let finalUsers = [];
     const search = req.body.search;
-    const discussions = await Disscusion.find({
+    const discussions = await Disscusion.findOne({
       $or: [
         { keywords: new RegExp(search) },
         { title: new RegExp(search) },
         { desc: new RegExp(search) },
       ],
     });
-    const users = await User.find({
+    const users = await User.findOne({
       $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }],
     }).select("-password -tokens -securityQuestion -securityQuestionAnswer");
     res.status(200).send({ discussions, users });

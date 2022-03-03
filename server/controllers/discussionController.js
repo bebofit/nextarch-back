@@ -9,7 +9,7 @@ const { Comment } = require("../models/comment");
 var router = express.Router();
 router.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 router.use(bodyParser.json());
@@ -23,11 +23,11 @@ router.post("/creatediss", async (req, res) => {
       keywords: req.body.keywords,
       imageurl: req.body.imageurl,
       userid: req.body.userid,
-      users: [req.body.userid]
+      users: [req.body.userid],
     }).save();
 
     res.send({
-      msg: true
+      msg: true,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -36,11 +36,11 @@ router.post("/creatediss", async (req, res) => {
 
 router.get("/:discId", async (req, res) => {
   let disc = await Disscusion.findOne({
-    _id: req.params.discId
+    _id: req.params.discId,
   });
 
   const mainUser = await User.findById({
-    _id: disc.userid[0]
+    _id: disc.userid[0],
   });
   let filteredMainUser = _.pick(mainUser, ["_id", "name", "imageurl"]);
   disc.userid[0] = filteredMainUser;
@@ -48,10 +48,10 @@ router.get("/:discId", async (req, res) => {
   if (disc.comments.length != 0) {
     for (let j = 0; j < disc.comments.length; j++) {
       const mainComment = await Comment.findById({
-        _id: disc.comments[j]._id
+        _id: disc.comments[j]._id,
       });
       const user = await User.findById({
-        _id: mainComment.commentor[0]
+        _id: mainComment.commentor[0],
       });
       let filteredUser = _.pick(user, ["_id", "name", "imageurl"]);
       mainComment.commentor[0] = filteredUser;
@@ -62,7 +62,7 @@ router.get("/:discId", async (req, res) => {
   if (disc.users.length != 0) {
     for (let k = 0; k < disc.users.length; k++) {
       const el = await User.findById({
-        _id: disc.users[k]._id
+        _id: disc.users[k]._id,
       });
       let result = _.pick(el, ["_id", "name"], "imageurl");
       disc.users[k] = result;
@@ -81,7 +81,7 @@ router.post(
     if (disc.comments.length != 0) {
       for (let j = 0; j < disc.comments.length; j++) {
         const mainComment = await Comment.findById({
-          _id: disc.comments[j]._id
+          _id: disc.comments[j]._id,
         });
         for (let k = 0; k < mainComment.likesarray.length; k++) {
           if (mainComment.likesarray[k] == req.body.userId) {
@@ -103,7 +103,7 @@ router.post(
 router.post("/checkDisckStarredByUser", authenticate, async (req, res) => {
   let discStatus = 0;
   const user = await User.findById({
-    _id: req.body.userId
+    _id: req.body.userId,
   });
   const disc = await Disscusion.findById({ _id: req.body.discId });
   if (user) {
@@ -121,18 +121,18 @@ router.post("/checkDisckStarredByUser", authenticate, async (req, res) => {
 });
 
 router.post("/getmydiscs", authenticate, async (req, res) => {
-  let discs = await Disscusion.find({
-    userid: [req.body.userid]
+  let discs = await Disscusion.findOne({
+    userid: [req.body.userid],
   });
 
   for (let i = 0; i < discs.length; i++) {
     if (discs[i].comments.length != 0) {
       for (let j = 0; j < discs[i].comments.length; j++) {
         const element = await Comment.findById({
-          _id: discs[i].comments[j]._id
+          _id: discs[i].comments[j]._id,
         });
         const user = await User.findById({
-          _id: element.commentor[0]
+          _id: element.commentor[0],
         });
         let result = _.pick(user, ["_id", "name", "imageurl"]);
         element.commentor[0] = result;
@@ -141,7 +141,7 @@ router.post("/getmydiscs", authenticate, async (req, res) => {
       if (discs[i].users.length != 0) {
         for (let k = 0; k < discs[i].users.length; k++) {
           const el = await User.findById({
-            _id: discs[i].users[k]._id
+            _id: discs[i].users[k]._id,
           });
           let result = _.pick(el, ["_id", "name", "imageurl"]);
           discs[i].users[k] = result;
@@ -164,7 +164,7 @@ router.post("/getMyStarredDiscs", authenticate, async (req, res) => {
         "title",
         "category",
         "createdAt",
-        "imageurl"
+        "imageurl",
       ]);
       finalStarredDiscs.push(filteredDisc);
     }
@@ -175,19 +175,19 @@ router.post("/getMyStarredDiscs", authenticate, async (req, res) => {
 });
 
 router.post("/getalldisc", async (req, res) => {
-  let discs = await Disscusion.find({});
+  let discs = await Disscusion.findOne({});
   let lastPostUserName = "";
   for (let i = 0; i < discs.length; i++) {
     const muser = await User.findById({
-      _id: discs[i].userid[0]
+      _id: discs[i].userid[0],
     });
     if (discs[i].comments.length != 0) {
       let lastCommenId = discs[i].comments.pop();
       const lastComment = await Comment.findById({
-        _id: lastCommenId
+        _id: lastCommenId,
       });
       const lastPostUser = await User.findById({
-        _id: lastComment.commentor[0]
+        _id: lastComment.commentor[0],
       });
       lastPostUserName = _.pick(lastPostUser, ["name", "imageurl"]);
       discs[i].lastCommentUserName = lastPostUserName.name;
@@ -202,7 +202,7 @@ router.post("/getalldisc", async (req, res) => {
       "category",
       "lastCommentUserName",
       "imageurl",
-      "createdAt"
+      "createdAt",
     ]);
     discs[i] = result;
   }
@@ -213,17 +213,17 @@ router.post("/stardisc", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.userid,
       },
       {
         $addToSet: {
-          favdisc: req.body.disid
-        }
+          favdisc: req.body.disid,
+        },
       }
     );
 
     res.status(200).send({
-      msg: "starred disc"
+      msg: "starred disc",
     });
   } catch (error) {
     res.status(400).send(error);
@@ -234,17 +234,17 @@ router.post("/unstardisc", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
-        _id: req.body.userid
+        _id: req.body.userid,
       },
       {
         $pull: {
-          favdisc: req.body.disid
-        }
+          favdisc: req.body.disid,
+        },
       }
     );
 
     res.status(200).send({
-      msg: "unstarred disc"
+      msg: "unstarred disc",
     });
   } catch (error) {
     res.status(400).send(error);
@@ -255,17 +255,17 @@ router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await Disscusion.findByIdAndUpdate(
       {
-        _id: req.body.discId
+        _id: req.body.discId,
       },
       {
-        imageurl: req.body.imageurl
+        imageurl: req.body.imageurl,
       },
       { new: true }
     );
     res.sendStatus(200);
   } catch (error) {
     res.status(400).send({
-      msg: error
+      msg: error,
     });
   }
 });
@@ -280,18 +280,18 @@ router.post("/trending", async (req, res) => {
         category: 1,
         createdAt: 1,
         imageurl: 1,
-        length: { $size: "$users" }
-      }
+        length: { $size: "$users" },
+      },
     },
     { $sort: { length: -1 } },
-    { $limit: 5 }
+    { $limit: 5 },
   ]);
   return res.status(200).send({ discs });
 });
 
 router.post("/latest", async (req, res) => {
   let finalDiscs = [];
-  const discs = await Disscusion.find({}).sort("-createdAt");
+  const discs = await Disscusion.findOne({}).sort("-createdAt");
   for (let k = 0; k < 5; k++) {
     if (k >= discs.length) break;
     const filteredDisc = _.pick(discs[k], [
@@ -300,7 +300,7 @@ router.post("/latest", async (req, res) => {
       "title",
       "category",
       "createdAt",
-      "imageurl"
+      "imageurl",
     ]);
     finalDiscs.push(filteredDisc);
   }
