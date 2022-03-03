@@ -12,6 +12,7 @@ const { Disscusion } = require("./models/disscusion");
 app.use(
   cors({
     origin: "http://nextarchlab.com",
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(bodyParser.json());
