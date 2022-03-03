@@ -11,7 +11,7 @@ const { User } = require("./models/User");
 const { Disscusion } = require("./models/disscusion");
 app.use(
   cors({
-    origin: "https://nextarchlab.com",
+    origin: "*",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
