@@ -9,7 +9,11 @@ const mongoose = require("mongoose");
 const { Notification } = require("./models/Notification");
 const { User } = require("./models/User");
 const { Disscusion } = require("./models/disscusion");
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://nextarchlab.com",
+  })
+);
 app.use(bodyParser.json());
 
 var thinktankController = require("./controllers/thinkTankController");
