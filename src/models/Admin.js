@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const validator = require('validator');
-const jwt = require('jsonwebtoken');
-var CryptoJS = require('crypto-js');
-const _ = require('lodash');
+const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
 var adminSchema = new Schema(
   {
@@ -14,39 +12,39 @@ var adminSchema = new Schema(
       unique: true,
       validate: {
         validator: validator.isEmail,
-        message: '{value} is not an email'
-      }
+        message: "{value} is not an email",
+      },
     },
     password: {
       type: String,
-      minlength: 6
+      minlength: 6,
     },
     name: {
       type: String,
-      required: true
+      required: true,
     },
     username: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-adminSchema.statics.findByToken = function(token) {
+adminSchema.statics.findByToken = function (token) {
   let Admin = this;
   var decoded;
   try {
-    decoded = jwt.verify(token, 'nourhany');
+    decoded = jwt.verify(token, "nourhany");
   } catch (error) {
     return Promise.reject();
   }
   return Admin.findOne({
     _id: decoded._id,
-    'tokens.token': token,
-    'tokens.access': 'admin'
+    "tokens.token": token,
+    "tokens.access": "admin",
   });
 };
 
-var Admin = mongoose.model('Admin', adminSchema);
+var Admin = mongoose.model("Admin", adminSchema);
 module.exports = { Admin };

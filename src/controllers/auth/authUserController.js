@@ -1,10 +1,8 @@
-const { User } = require("../models/User");
-const { authenticate } = require("../middleware/authenticate");
+const { User } = require("../../models/User");
+const { authenticate } = require("../../middleware/authenticate");
 var CryptoJS = require("crypto-js");
-
 var express = require("express");
 var bodyParser = require("body-parser");
-const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -15,13 +13,11 @@ router.use(
 router.use(bodyParser.json());
 
 router.post("/signup", (req, res) => {
-  // var body = _.pick(req.body);
   let createdAt = new Date();
   var ciphertext = CryptoJS.AES.encrypt(
     req.body.password,
     "cabonourhanysisa1997"
   );
-  // let s = monthNames[d.getMonth()] + ' ' + d.get400() + ', ' + d.getFullYear()
   var user = new User({
     email: req.body.email,
     username: req.body.username,
@@ -86,7 +82,6 @@ router.post("/login", async (req, res) => {
     delete userObject.tokens;
     delete userObject.securityQuestion;
     delete userObject.securityQuestionAnswer;
-
     return res.send({
       user: userObject,
       token: token,

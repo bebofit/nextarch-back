@@ -1,4 +1,4 @@
-const { Admin } = require("../models/Admin");
+const { Admin } = require("../../models/Admin");
 var CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 var express = require("express");

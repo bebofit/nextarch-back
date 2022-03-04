@@ -1,6 +1,6 @@
-const { User } = require("../models/User");
-const { authenticate } = require("../middleware/authenticate");
-const { Disscusion } = require("../models/disscusion");
+const { User } = require("../../models/User");
+const { authenticate } = require("../../middleware/authenticate");
+const { Disscusion } = require("../../models/disscusion");
 var express = require("express");
 var bodyParser = require("body-parser");
 const _ = require("lodash");
@@ -13,38 +13,38 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.post("/getuser", authenticate, async (req, res) => {
-  const user = await User.findOne({ _id: req.body.id }).select(
+router.get("/:id", authenticate, async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id }).select(
     "-password -tokens -securityQuestion -securityQuestionAnswer"
   );
   res.status(200).send(user);
 });
 
 router.get("/getActiveDiscs", authenticate, async (req, res) => {
-  const discs = await (
-    await User.findOne({ _id: req.body.id }).select("activeDiscs")
-  ).populate("activeDiscs");
+  const discs = await User.find({ _id: req.body.id })
+    .select("activeDiscs")
+    .populate("activeDiscs");
   res.status(200).json({
     discussions: discs,
   });
 });
 
 router.post("/getuserFollowing", authenticate, async (req, res) => {
-  const user = await User.findOne({ _id: req.body.id })
+  const user = await User.find({ _id: req.body.id })
     .select("following")
     .populate("following", "name desc imageurl username");
   res.send(user);
 });
 
 router.post("/getuserFollowers", authenticate, async (req, res) => {
-  const user = await User.findOne({ _id: req.body.id })
+  const user = await User.find({ _id: req.body.id })
     .select("followers")
     .populate("followers", "name desc imageurl username");
   res.send(user);
 });
 
 router.post("/getNotifications", authenticate, async (req, res) => {
-  const user = await User.findOne({ _id: req.body.id })
+  const user = await User.find({ _id: req.body.id })
     .select("notification")
     .populate("notification");
   res.send(user).status(200);

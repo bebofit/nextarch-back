@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 var CryptoJS = require("crypto-js");
-const _ = require("lodash");
 
 var UserSchema = new Schema(
   {

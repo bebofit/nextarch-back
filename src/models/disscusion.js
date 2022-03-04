@@ -1,65 +1,64 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const validator = require('validator');
 
 var DisscusionSchema = new Schema(
   {
     title: {
-      type: String
+      type: String,
     },
     desc: {
       type: String,
-      default: ''
+      default: "",
     },
     category: {
-      type: String
+      type: String,
     },
     keywords: [
       {
-        type: String
-      }
+        type: String,
+      },
     ],
     privateDisc: {
       type: Schema.Types.ObjectId,
-      ref: 'PrivateDisscusion',
-      default: null
+      ref: "PrivateDisscusion",
+      default: null,
     },
 
     comments: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Comment'
-      }
+        ref: "Comment",
+      },
     ],
     userid: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: "User",
+      },
     ],
     lastpost: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: "User",
     },
     users: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: "User",
+      },
     ],
     imageurl: {
       type: String,
-      default: ''
+      default: "",
     },
     status: {
-      type: Number
+      type: Number,
     },
     lastCommentUserName: {
-      type: String
-    }
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-var Disscusion = mongoose.model('Disscusion', DisscusionSchema);
+var Disscusion = mongoose.model("Disscusion", DisscusionSchema);
 module.exports = { Disscusion };

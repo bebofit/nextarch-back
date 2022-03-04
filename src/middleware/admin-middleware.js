@@ -1,10 +1,8 @@
-const jwt = require('jsonwebtoken');
-var { Admin } = require('../models/Admin');
-const _ = require('lodash');
+const jwt = require("jsonwebtoken");
 
 const verify = async (req, res) => {
-  const token = req.header('x-auth');
-  jwt.verify(token, 'nourhany', (err, authInfo) => {
+  const token = req.header("x-auth");
+  jwt.verify(token, "nourhany", (err, authInfo) => {
     if (err) {
       Promise.reject(err);
     }

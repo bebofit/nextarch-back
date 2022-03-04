@@ -1,15 +1,14 @@
-const { Admin } = require("../models/Admin");
-const { User } = require("../models/User");
-const { Disscusion } = require("../models/disscusion");
-const { PrivateDisscusion } = require("../models/private-discusion");
-const { Comment } = require("../models/comment");
-const { Form } = require("../models/Form");
-const { adminMiddleware } = require("../middleware/admin-middleware");
+const { Admin } = require("../../models/Admin");
+const { User } = require("../../models/User");
+const { Disscusion } = require("../../models/disscusion");
+const { PrivateDisscusion } = require("../../models/private-discusion");
+const { Comment } = require("../../models/comment");
+const { Form } = require("../../models/Form");
+const { adminMiddleware } = require("../../middleware/admin-middleware");
 var CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 var express = require("express");
 var bodyParser = require("body-parser");
-const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -19,16 +18,16 @@ router.use(
 );
 router.use(bodyParser.json());
 
-router.get("/getAllAdmins", adminMiddleware, async (req, res) => {
+router.get("/", adminMiddleware, async (req, res) => {
   try {
-    const admins = await Admin.findOne({}).select("-password");
+    const admins = await Admin.find().select("-password");
     res.send({ admins }).status(200);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.get("/getAdminById/:adminId", adminMiddleware, async (req, res) => {
+router.get("/:adminId", adminMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({ _id: req.params.adminId }).select(
       "-password"
