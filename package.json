@@ -4,8 +4,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "mocha src/**/*.test.js",
-    "test-watch": "nodemon --exec \"npm test \"",
     "watch": "nodemon src/server.js"
   },
   "license": "ISC",

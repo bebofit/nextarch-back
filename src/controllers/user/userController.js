@@ -3,7 +3,6 @@ const { authenticate } = require("../../middleware/authenticate");
 const { Disscusion } = require("../../models/disscusion");
 var express = require("express");
 var bodyParser = require("body-parser");
-const _ = require("lodash");
 
 var router = express.Router();
 router.use(
@@ -60,7 +59,6 @@ router.post("/getOtherUser", authenticate, async (req, res) => {
     }
   }
   const otherUserObject = otherUser.toJSON();
-
   delete otherUserObject.password;
   delete otherUserObject.tokens;
   delete otherUserObject.securityQuestion;
@@ -79,18 +77,6 @@ router.post("/edituser", authenticate, async (req, res) => {
   res.status(200).send({ msg: "done" });
 });
 
-router.post("/img", authenticate, async (req, res) => {
-  try {
-    let user = await User.findByIdAndUpdate(
-      { _id: req.body.id },
-      { imageurl: req.body.imgurl }
-    );
-    res.send({ msg: "done" });
-  } catch (error) {
-    res.status(400).send();
-  }
-});
-
 router.post("/updateimage", authenticate, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
@@ -106,8 +92,6 @@ router.post("/updateimage", authenticate, async (req, res) => {
       msg: req.body.imageurl,
     });
   } catch (error) {
-    console.log(error);
-
     res.status(400).send({
       msg: error,
     });

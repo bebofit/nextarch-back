@@ -15,7 +15,7 @@ router.use(
 router.use(bodyParser.json());
 
 router.get("/", async (req, res) => {
-  let discs = await Disscusion.find();
+  let discs = await Disscusion.find().populate("");
   res.status(200).send(discs);
 
   // hena el code dah bygyb el last post user name 3shan yt7at fel discussions el fel home page
@@ -122,7 +122,7 @@ router.post("/getmydiscs", authenticate, async (req, res) => {
   // }
 });
 
-router.post("/creatediss", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const discus = await new Disscusion({
       title: req.body.title,
@@ -212,7 +212,7 @@ router.post("/getMyStarredDiscs", authenticate, async (req, res) => {
   }
 });
 
-router.post("/stardisc", authenticate, async (req, res) => {
+router.post("/star", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
@@ -233,7 +233,7 @@ router.post("/stardisc", authenticate, async (req, res) => {
   }
 });
 
-router.post("/unstardisc", authenticate, async (req, res) => {
+router.post("/unStar", authenticate, async (req, res) => {
   try {
     let dis = await User.findByIdAndUpdate(
       {
@@ -251,25 +251,6 @@ router.post("/unstardisc", authenticate, async (req, res) => {
     });
   } catch (error) {
     res.status(400).send(error);
-  }
-});
-
-router.post("/updateimage", authenticate, async (req, res) => {
-  try {
-    const user = await Disscusion.findByIdAndUpdate(
-      {
-        _id: req.body.discId,
-      },
-      {
-        imageurl: req.body.imageurl,
-      },
-      { new: true }
-    );
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(400).send({
-      msg: error,
-    });
   }
 });
 
