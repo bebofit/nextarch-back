@@ -9,11 +9,9 @@ const mongoose = require("mongoose");
 const { Notification } = require("./models/Notification");
 const { User } = require("./models/User");
 const { Disscusion } = require("./models/disscusion");
-app.use(cors({
-  origin: function() {
-    return true
-  }
-}));
+app.use(
+  cors()
+);
 app.use(bodyParser.json());
 
 var adminCrudsController = require("./controllers/admin/adminCruds");
@@ -43,6 +41,7 @@ mongoose
   })
   .catch((err) => {
     console.log(err);
+    process.exit(1);
   })
   .then(() => {
     console.log("Connected to MongoDB");
