@@ -36,12 +36,11 @@ app.use((error, req, res, next) => {
   console.error('Error: ', error)
  
   if (error.type == 'redirect')
-      res.redirect('/error')
-
-   else if (error.type == 'time-out') // arbitrary condition check
-      res.status(408).send(error)
-  else
-      res.status(500).send(error)
+      return res.redirect('/error')
+  else if (error.type == 'time-out') // arbitrary condition check
+      return res.status(408).send(error)
+      else
+        return res.status(500).send(error)
 })
 
 const devDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch-dev?retryWrites=true&w=majority`;
