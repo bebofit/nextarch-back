@@ -1,8 +1,12 @@
+const { ObjectID } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 var DisscusionSchema = new Schema(
   {
+    _id: {
+      type: ObjectID,
+    },
     title: {
       type: String,
     },

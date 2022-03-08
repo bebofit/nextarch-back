@@ -13,6 +13,10 @@ router.use(
 router.use(bodyParser.json());
 
 router.post("/signup", (req, res) => {
+  try {
+  } catch (error) {
+    return res.status(error.code).json({ msg: error.message });
+  }
   let createdAt = new Date();
   var ciphertext = CryptoJS.AES.encrypt(
     req.body.password,

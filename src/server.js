@@ -9,9 +9,7 @@ const mongoose = require("mongoose");
 const { Notification } = require("./models/Notification");
 const { User } = require("./models/User");
 const { Disscusion } = require("./models/disscusion");
-app.use(
-  cors()
-);
+app.use(cors());
 app.use(bodyParser.json());
 
 var adminCrudsController = require("./controllers/admin/adminCruds");
@@ -31,19 +29,18 @@ app.use("/thinktank", thinktankController);
 app.use("/users", userController);
 
 app.use((error, req, res, next) => {
-  console.log("Error Handling Middleware called")
-  console.log('Path: ', req.path)
-  console.error('Error: ', error)
- 
-  if (error.type == 'redirect')
-      return res.redirect('/error')
-  else if (error.type == 'time-out') // arbitrary condition check
-      return res.status(408).send(error)
-      else
-        return res.status(500).send(error)
-})
+  console.log("Error Handling Middleware called");
+  console.log("Path: ", req.path);
+  console.error("Error: ", error);
 
-process.on('uncaughtException', function (err) {
+  if (error.type == "redirect") return res.redirect("/error");
+  else if (error.type == "time-out")
+    // arbitrary condition check
+    return res.status(408).send(error);
+  else return res.status(500).send(error);
+});
+
+process.on("uncaughtException", function (err) {
   console.error(err);
   console.log("Node NOT Exiting...");
 });

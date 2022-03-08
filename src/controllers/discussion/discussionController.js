@@ -15,8 +15,12 @@ router.use(
 router.use(bodyParser.json());
 
 router.get("/", async (req, res) => {
-  let discs = await Disscusion.find().populate("");
-  res.status(200).send(discs);
+  try{
+    let discs = await Disscusion.find()
+    res.status(200).send(discs);
+  }catch(error){
+    res.status(error.status).json({message: error.message})
+  }
 
   // hena el code dah bygyb el last post user name 3shan yt7at fel discussions el fel home page
 
