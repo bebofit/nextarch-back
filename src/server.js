@@ -30,6 +30,20 @@ app.use("/disc", discussionController);
 app.use("/thinktank", thinktankController);
 app.use("/users", userController);
 
+app.use((error, req, res, next) => {
+  console.log("Error Handling Middleware called")
+  console.log('Path: ', req.path)
+  console.error('Error: ', error)
+ 
+  if (error.type == 'redirect')
+      res.redirect('/error')
+
+   else if (error.type == 'time-out') // arbitrary condition check
+      res.status(408).send(error)
+  else
+      res.status(500).send(error)
+})
+
 const devDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch-dev?retryWrites=true&w=majority`;
 const prodDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch?retryWrites=true&w=majority`;
 
