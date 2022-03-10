@@ -70,7 +70,7 @@ router.get("/:discId", async (req, res) => {
       select: 'name'
     }
   });
-  res.status(200).send(disc.comments);
+  res.status(200).send(disc);
 
   // hena el code dah bygyb el comments bta3t el discussion w bya5od wa2t kbeer fash5 700ms w law commented bya5od 400ms
 
