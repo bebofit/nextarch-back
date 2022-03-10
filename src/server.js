@@ -49,7 +49,7 @@ const devDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongod
 const prodDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch?retryWrites=true&w=majority`;
 
 mongoose
-  .connect(devDB, {
+  .connect(prodDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
