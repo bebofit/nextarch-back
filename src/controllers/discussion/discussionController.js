@@ -15,15 +15,19 @@ router.use(
 router.use(bodyParser.json());
 
 router.get("/", async (req, res) => {
-  try{
-    let discs = await Disscusion.find()
-    res.status(200).send(discs);
-  }catch(error){
-    res.status(error.status).json({message: error.message})
-  }
-
+  let discs = await Disscusion.find().populate({
+    path: 'comments',
+    options: { 
+      limit: 1,
+      sort: { $natural : -1 }
+    },
+    populate: { 
+      path: 'commentor',
+      select: 'name'
+    }
+  })
+  return res.json(discs)
   // hena el code dah bygyb el last post user name 3shan yt7at fel discussions el fel home page
-
   // let lastPostUserName = "";
   // for (let i = 0; i < discs.length; i++) {
   //   const muser = await User.findById({
@@ -59,8 +63,14 @@ router.get("/", async (req, res) => {
 router.get("/:discId", async (req, res) => {
   let disc = await Disscusion.findOne({
     _id: req.params.discId,
+  }).populate({
+    path: 'comments',
+    populate: { 
+      path: 'commentor',
+      select: 'name'
+    }
   });
-  res.status(200).send(disc);
+  res.status(200).send(disc.comments);
 
   // hena el code dah bygyb el comments bta3t el discussion w bya5od wa2t kbeer fash5 700ms w law commented bya5od 400ms
 
