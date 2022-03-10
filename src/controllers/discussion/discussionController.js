@@ -38,6 +38,8 @@ router.get("/:discId", async (req, res) => {
       path: 'commentor',
       select: 'name'
     }
+  }).populate({
+    path: 'users'
   });
   res.status(200).send(disc);
 });
