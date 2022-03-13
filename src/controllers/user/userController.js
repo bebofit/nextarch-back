@@ -166,22 +166,24 @@ router.post("/unfollow", authenticate, async (req, res) => {
 
 router.post("/search", authenticate, async (req, res) => {
   try {
-    let finalUsers = [];
     const search = req.body.search;
-    const discussions = await Disscusion.findOne({
+    const discussions = await Disscusion.find({
       $or: [
         { keywords: new RegExp(search) },
         { title: new RegExp(search) },
         { desc: new RegExp(search) },
       ],
     });
-    const users = await User.findOne({
-      $or: [{ name: new RegExp(search) }, { username: new RegExp(search) }],
+    const users = await User.find({
+      $or: [
+        { name: new RegExp(search, "i") },
+        { username: new RegExp(search, "i") },
+      ],
     }).select("-password -tokens -securityQuestion -securityQuestionAnswer");
     res.status(200).send({ discussions, users });
   } catch (error) {
     res.status(400).send({
-      msg: "error ya sisa",
+      msg: "No results found",
     });
   }
 });
