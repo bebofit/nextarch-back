@@ -17,7 +17,7 @@
     "mongodb": "^2.2.36",
     "mongoose": "^5.13.14",
     "mongoose-sequence": "^5.3.1",
-    "socket.io": "^2.4.1",
+    "socket.io": "^2.5.0",
     "validator": "^5.6.0"
   },
   "devDependencies": {
