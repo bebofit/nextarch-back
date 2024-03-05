@@ -45,8 +45,8 @@ process.on("uncaughtException", function (err) {
   console.log("Node NOT Exiting...");
 });
 
-const devDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch-dev?retryWrites=true&w=majority`;
-const prodDB = `mongodb+srv://general-user:PDFLAg6A4ynwuRix@cluster0.ifrtn.mongodb.net/nextarch?retryWrites=true&w=majority`;
+const devDB = `mongodb+srv://general-user:tPL3Qrp2llKrRyGB@cluster0.ifrtn.mongodb.net/nextarch-dev?retryWrites=true&w=majority`;
+const prodDB = `mongodb+srv://general-user:tPL3Qrp2llKrRyGB@cluster0.ifrtn.mongodb.net/nextarch?retryWrites=true&w=majority&appName=Cluster0`;
 
 mongoose
   .connect(prodDB, {
